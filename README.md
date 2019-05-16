@@ -6,13 +6,27 @@
 
 ## 风格
 
-[*The Ruby Style Guide*](https://github.com/rubocop-hq/ruby-style-guide)<sub> [*cmn-Hans*](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md)</sub>
+[*The Ruby Style Guide*](https://github.com/rubocop-hq/ruby-style-guide) <sub>(
+  [*cmn-Hans*](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md) )</sub>
+
+## 指南
+
+*   *[Programming Ruby 中文版：第 2 版](http://zbgb.org/278/ZdocDetail3691109.htm "ISBN 978-7-121-03815-0")*
 
 ## Awesome
 
-[*Awesome Ruby*](https://awesome-ruby.com/)
+*[Awesome Ruby](https://awesome-ruby.com/)*
 
-[*RubyMine*](https://jetbrains.com/ruby/)
+PACKAGE MANAGEMENT
+/ *[Bundler](https://bundler.io/)*
+
+TESTING
+/ *[RSpec](https://rspec.info/)* <sub>(
+    *[better](http://betterspecs.org/)*,
+    *[-cmn-Hans](http://betterspecs.org/zh_cn/)* )</sub>
+
+IDE
+/ *[RubyMine](https://jetbrains.com/ruby/)*
 
 ## 许可
 
