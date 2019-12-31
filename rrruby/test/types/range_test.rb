@@ -1,14 +1,13 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/env ruby
 # coding: utf-8
-
-# 范围
 
 require 'test/unit'
 
+# 范围
 class TestCaseForRange < Test::Unit::TestCase
 
+  # 范围字面量
   def test_range_literal
-    # 范围字面量
     assert_equal(10, (1..10).count)
     assert_equal(9, (1...10).count)
     assert_equal(26, ('a'..'z').count)

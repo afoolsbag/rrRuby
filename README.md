@@ -17,11 +17,16 @@
 
 ## 指南
 
+*   [“Ruby Programming”](https://wikibooks.org/wiki/Ruby_Programming). *Wikibooks*.
 *   [*Programming Ruby 中文版：第 2 版*](http://zbgb.org/278/ZdocDetail3691109.htm "ISBN 978-7-121-03815-0")
 
 ## Awesome
 
 [*Awesome Ruby*](https://awesome-ruby.com/)
+
+| [*Rake*](https://ruby.github.io/rake/)
+| [*RDoc*](https://ruby.github.io/rdoc/) <sub>
+      [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
 
 环境管理
 | [*rbenv*](https://github.com/rbenv/rbenv),
