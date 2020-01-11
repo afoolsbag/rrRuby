@@ -1,17 +1,23 @@
 #!/usr/bin/env ruby
 # coding: utf-8
+#
+# zhengrr
+# 2019-12-31 – 2020-01-02
+# Unlicense
 
 require 'test/unit'
 
 ##
 # 数组
 #
-# Array < Object
+#   Array < Object
 #
 class TestCaseForArray < Test::Unit::TestCase
 
   ##
   # 数组字面量
+  #
+  # {Arrays}[https://wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Arrays]
   #
   def test_array_literal
     a = [false, 12345, 'str']
