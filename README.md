@@ -27,6 +27,7 @@
 | [*Rake*](https://ruby.github.io/rake/)
 | [*RDoc*](https://ruby.github.io/rdoc/) <sub>
       [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
+| [*Shoes!*](http://shoesrb.com/)
 
 环境管理
 | [*rbenv*](https://github.com/rbenv/rbenv),
