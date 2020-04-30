@@ -4,6 +4,39 @@
 
 松本行弘
 
+```cmder
+%USERPROFILE% λ ruby -w <script.rb>  # 运行脚本
+%USERPROFILE% λ irb                  # 交互式 Ruby 壳层
+
+%USERPROFILE% λ gem sources [--list]     # 列出源
+:: abbr.        gem sources [-l]
+%USERPROFILE% λ gem sources --add        # 增加源
+:: abbr         gem sources -a
+%USERPROFILE% λ gem sources --remove     # 去除源
+:: abbr.        gem sources -r
+%USERPROFILE% λ gem sources --clear-all  # 清空源和缓存
+:: abbr.        gem sources -c
+%USERPROFILE% λ gem sources --update     # 更新缓存
+:: abbr.        gem sources -u
+%USERPROFILE% λ gem sources -a https://gems.ruby-china.com/ -r https://rubygems.org/
+
+%USERPROFILE% λ gem update --system               # 升级 RubyGems
+%USERPROFILE% λ gem list --locale                 # 列出已安装的 Gem
+:: abbr.        gem liar -l
+%USERPROFILE% λ gem query --remote --name <name>  # 按名称查询 Gem
+:: abbr.        gem query -rn <name>
+%USERPROFILE% λ gem install <gem> --remote        # 安装 Gem
+:: abbr.        gem install <gem> -r
+%USERPROFILE% λ gem update <gem> --remote         # 升级 Gem
+:: abbr.        gem update <gem> -r
+%USERPROFILE% λ gem uninstall <gem>               # 卸载 Gem
+%USERPROFILE% λ gem server                        # 运行本地 Gem RDoc 文档服务
+
+%USERPROFILE% λ bundle install  # 依 Gemfile 安装依赖的 Gem
+
+%USERPROFILE% λ rdoc  # 依代码注释生成文档
+```
+
 ## 参考
 
 *   [*Ruby-Doc.org*](https://ruby-doc.org/)
@@ -83,7 +116,6 @@
         *   [全局变量](https://ruby-doc.org/core/doc/globals_rdoc.html)
     *   [Standard Library API](https://ruby-doc.org/stdlib/)
 
-
 *   [“Ruby Quickref”](http://zenspider.com/ruby/quickref.html). *zenspider.com*.
 
 ## 风格
@@ -102,8 +134,10 @@
 
 [*Awesome Ruby*](https://awesome-ruby.com/)
 
-| [*Rake*](https://ruby.github.io/rake/)
+| [*Rake*](https://ruby.github.io/rake/) <sub>
+      [*Rakefile*](https://ruby.github.io/rake/doc/rakefile_rdoc.html) </sub>
 | [*RDoc*](https://ruby.github.io/rdoc/) <sub>
+      [*writing-doc*](https://ruby.github.io/rdoc/README_rdoc.html#label-Writing+Documentation),
       [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
 | [*Shoes!*](http://shoesrb.com/)
 
@@ -114,7 +148,8 @@
 
 包管理器
 | [*RubyGems*](https://rubygems.org/)
-| [*Bundler*](https://bundler.io/)
+| [*Bundler*](https://bundler.io/) <sub>
+      [*Gemfile*](https://bundler.io/man/gemfile.5.html) </sub>
 
 测试
 | [*test-unit*](https://test-unit.github.io/)
