@@ -8,23 +8,23 @@
 require 'test/unit'
 
 ##
-# 哈希（表）
+# 散列表 <tt>Hash < Object</tt>
 #
-#   Hash < Object
-#
-class TestCaseForHash < Test::Unit::TestCase
+# {Hashes}[https://ruby-doc.org/core/doc/syntax/literals_rdoc.html#label-Hashes]
+class Tc4Hash < Test::Unit::TestCase
 
   ##
-  # 哈希（表）字面量
-  #
-  # {Hashes}[https://wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Hashes]
-  #
+  # 散列表字面量
   def test_hash_literal
-    h = {false => 'str', 12345 => false, 'str' => 12345}
+    h = {
+        'k1' => 'v1',
+        'k2' => 'v2',
+        'k3' => 'v3'
+    }
 
-    assert_equal('str', h[false])
-    assert_equal(false, h[12345])
-    assert_equal(12345, h['str'])
+    assert_equal('v1', h['k1'])
+    assert_equal('v2', h['k2'])
+    assert_equal('v3', h['k3'])
     assert_equal(nil, h[nil])
 
     assert_instance_of(Hash, h)

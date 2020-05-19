@@ -1,5 +1,13 @@
 task default: %w[test]
 
-task :test do
-  ruby "test/run_test.rb"
+task :deps do
+  sh 'bundler install'
+end
+
+task test: [:deps] do
+  ruby 'test/run_test.rb'
+end
+
+task :doc do
+  sh 'rdoc'
 end
