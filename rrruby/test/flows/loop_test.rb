@@ -12,7 +12,7 @@ require 'test/unit'
 #
 # {Loops}[https://wikibooks.org/wiki/Ruby_Programming/Syntax/Control_Structures#Loops]
 #
-class TestCaseForLoop < Test::Unit::TestCase
+class LoopTest < Test::Unit::TestCase
 
   ##
   # +while-end+ 循环语句

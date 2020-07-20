@@ -2,7 +2,7 @@
 # coding: utf-8
 #
 # zhengrr
-# 2019-12-31 – 2020-01-02
+# 2019-12-31 – 2020-07-20
 # Unlicense
 
 require 'test/unit'
@@ -10,24 +10,24 @@ require 'test/unit'
 ##
 # 字符串
 #
-class TestCaseForString < Test::Unit::TestCase
+class StringTest < Test::Unit::TestCase
 
   ##
-  # 字符串字面量
+  # <b>字符串字面量</b>
   #
   # 单引号字符串不支持插值，且仅支持 <code>\\\\</code> 和 <code>\`</code> 转义序列：
   #
   #   'string with single quote'
   #
   # 双引号字符串支持插值，并支持以下转义序列：
-  # *  <code>\\\\</code> 反斜线
-  # *  <code>\"</code> 双引号
-  # *  <code>\a</code> 告警 alert
-  # *  <code>\b</code> 退格 backspace
-  # *  <code>\r</code> 回车 carriage return
-  # *  <code>\n</code> 换行 newline
-  # *  <code>\s</code> 空格 space
-  # *  <code>\t</code> 制表符 tab
+  # * <code>\\\\</code> 反斜线
+  # * <code>\"</code> 双引号
+  # * <code>\a</code> 告警 alert
+  # * <code>\b</code> 退格 backspace
+  # * <code>\r</code> 回车 carriage return
+  # * <code>\n</code> 换行 newline
+  # * <code>\s</code> 空格 space
+  # * <code>\t</code> 制表符 tab
   #
   #   "string with double quote"
   #
@@ -39,7 +39,7 @@ class TestCaseForString < Test::Unit::TestCase
   end
 
   ##
-  # 备用引号
+  # <b>备用引号</b>
   #
   # 对于 Perl 程序员来说 <code>%q</code> 和 <code>%Q</code> 可能更亲切：
   # <code>%q?...?</code> 等同于 <code>'...'</code>，

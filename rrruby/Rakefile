@@ -1,13 +1,29 @@
-task default: %w[test]
+require 'fileutils'
+
+task default: %w[all_until_run]
 
 task :deps do
   sh 'bundler install'
 end
 
-task test: [:deps] do
+task :test do
   ruby 'test/run_test.rb'
+end
+
+task all_until_test: [:deps, :test]
+
+task :run do
+  ruby 'src/main.rb'
+end
+
+task all_until_run: [:deps, :test, :run]
+
+task :clean_doc do
+  FileUtils.remove_dir('doc/', force = true)
 end
 
 task :doc do
   sh 'rdoc'
 end
+
+task redoc: [:clean_doc, :doc]

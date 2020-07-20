@@ -11,7 +11,7 @@ require 'test/unit'
 # 散列表 <tt>Hash < Object</tt>
 #
 # {Hashes}[https://ruby-doc.org/core/doc/syntax/literals_rdoc.html#label-Hashes]
-class Tc4Hash < Test::Unit::TestCase
+class HashTest < Test::Unit::TestCase
 
   ##
   # 散列表字面量

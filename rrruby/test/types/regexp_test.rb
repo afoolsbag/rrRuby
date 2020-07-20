@@ -12,7 +12,7 @@ require 'test/unit'
 #
 #   Regexp < Object
 #
-class TestCaseForRegexp < Test::Unit::TestCase
+class RegexpTest < Test::Unit::TestCase
 
   ##
   # 正则表达式字面量

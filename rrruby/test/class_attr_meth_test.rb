@@ -33,5 +33,5 @@ class Clazz
 
 end
 
-class TC4Class < Test::Unit::TestCase
+class ClassTest < Test::Unit::TestCase
 end

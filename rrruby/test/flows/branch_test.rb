@@ -12,7 +12,7 @@ require 'test/unit'
 #
 # {Branches}[https://wikibooks.org/wiki/Ruby_Programming/Syntax/Control_Structures#Conditional_Branches]
 #
-class TestCaseForBranch < Test::Unit::TestCase
+class BranchTest < Test::Unit::TestCase
 
   ##
   # +if-elsif-else-end+ 分支语句

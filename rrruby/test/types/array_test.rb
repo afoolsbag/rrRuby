@@ -12,7 +12,7 @@ require 'test/unit'
 #
 #   Array < Object
 #
-class TestCaseForArray < Test::Unit::TestCase
+class ArrayTest < Test::Unit::TestCase
 
   ##
   # 数组字面量

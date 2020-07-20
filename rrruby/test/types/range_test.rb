@@ -12,7 +12,7 @@ require 'test/unit'
 #
 #   Range < Object
 #
-class TestCaseForRange < Test::Unit::TestCase
+class RangeTest < Test::Unit::TestCase
 
   ##
   # 范围字面量

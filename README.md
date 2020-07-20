@@ -32,8 +32,9 @@
 
 ## 指南
 
-*   [“Ruby Documentation Bundle”](https://ruby-doc.org/docs/ruby-doc-bundle/). *Ruby-Doc.org*.
-*   [“Ruby Programming”](https://wikibooks.org/wiki/Ruby_Programming). *Wikibooks*.
+*   [*Learn Ruby*](http://rubylearning.com/)
+*   Ruby-Doc.org 上的 [*Ruby Documentation Bundle*](https://ruby-doc.org/docs/ruby-doc-bundle/)
+*   Wikibooks 上的 [*Ruby Programming*](https://wikibooks.org/wiki/Ruby_Programming)
 *   [*Programming Ruby 中文版：第 2 版*](http://zbgb.org/278/ZdocDetail3691109.htm "ISBN 978-7-121-03815-0")
 *   *松本行弘的程序世界*
 

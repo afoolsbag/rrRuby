@@ -15,7 +15,7 @@ def invoke_proc_from_block(&block)
   block.call()
 end
 
-class TC4Block < Test::Unit::TestCase
+class BlockTest < Test::Unit::TestCase
   def test_block_p0
     tmp = just_invoke_block_p0 {'block'}
     assert_equal('block', tmp)
