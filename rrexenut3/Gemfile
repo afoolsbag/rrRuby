@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source 'https://gems.ruby-china.com/'
+
+gem 'colorize'
+gem 'ruby-units'
+
+gem 'rdoc', require: false
+gem 'rubocop', require: false
+gem 'test-unit', require: false

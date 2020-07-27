@@ -16,8 +16,10 @@ module Types
   # 参见 {Ruby 内核参考：Array}[https://ruby-doc.org/core/Array.html]。
   class ArrayTest < Test::Unit::TestCase
     ##
-    # 数组类型。
-    def test_array_type
+    # 数组。
+    #
+    # 倾向使用 <tt>a = []</tt> 而非 <tt>a = Array.new</tt> 创建数组。
+    def test_array
       a = []
       assert_instance_of(Array, a)
       assert_equal(Object, a.class.superclass)
@@ -25,46 +27,47 @@ module Types
 
     ##
     # 数组字面量。
+    #--
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    #++
     def test_array_literal
-      a = [false, 123_5, 'str']
+      a = [false, 1_337, 'abc']
+
+      assert_equal(false, a.first)
+      assert_equal('abc', a.last)
 
       assert_equal(false, a[0])
-      assert_equal(123_5, a[1])
-      assert_equal('str', a[2])
-      assert_equal(nil, a[3])
+      assert_equal(1_337, a[1])
+      assert_equal('abc', a[2])
+      assert_nil(a[3])
+
+      assert_equal('abc', a[-1])
+      assert_equal(1_337, a[-2])
+      assert_equal(false, a[-3])
+      assert_nil(a[-4])
+    end
+
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    ##
+    # 单词数组字面量。
+    #
+    # 倾向使用 <tt>%w</tt> 创建单词数组。
+    def test_words_array_literal
+      a1 = %w[word1 word2 word3]
+      a2 = ['word1', 'word2', 'word3'] # rubocop:disable Style/WordArray
+      assert_equal(a2, a1)
     end
 
     ##
-    # 符号数组。
-    def test_array_of_symbols
-      # 非插值符号数组
-      _ = %i[]
-
-      # 插值符号数组
-      _ = %I[]
+    # 符号数组字面量。
+    #
+    # 倾向使用 <tt>%i</tt> 创建符号数组。
+    def test_symbols_array_literal
+      a1 = %i[symbol1 symbol2 symbol3]
+      a2 = [:symbol1, :symbol2, :symbol3] # rubocop:disable Style/SymbolArray
+      assert_equal(a2, a1)
     end
-
-    ##
-    # 单词数组。
-    #--
-    # rubocop:disable Metrics/AbcSize
-    #++
-    def test_array_of_words
-      # 非插值单词数组
-      w1 = %w[foo bar baz #{1+1}] # rubocop:disable Lint/InterpolationCheck
-      assert_equal('foo', w1[0])
-      assert_equal('bar', w1[1])
-      assert_equal('baz', w1[2])
-      assert_equal('#{1+1}', w1[3]) # rubocop:disable Lint/InterpolationCheck
-
-      # 插值单词数组
-      w2 = %W[foo bar baz #{1 + 1}]
-      assert_equal('foo', w2[0])
-      assert_equal('bar', w2[1])
-      assert_equal('baz', w2[2])
-      assert_equal('2', w2[3])
-    end
-    # rubocop:enable Metrics/AbcSize
 
     ##
     # 子数组（数组切片）。

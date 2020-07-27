@@ -24,7 +24,7 @@ end
 
 # 清理文档
 task :clean_documentation do
-  FileUtils.remove_dir('doc/', true)
+  FileUtils.remove_dir('doc/', force = true)
 end
 
 # 生成文档
@@ -35,4 +35,4 @@ end
 # 组合和默认任务
 task setup: %i[install_dependencies]
 task doc: %i[clean_documentation generate_documentation]
-task default: %i[install_dependencies lint test doc]
+task default: %w[install_dependencies lint test doc]

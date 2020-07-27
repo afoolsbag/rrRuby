@@ -14,6 +14,7 @@
 
 *   [*The Ruby Style Guide*](https://rubystyle.guide/) <sub>
         [*cmn-Hans*](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md) </sub>
+*   RubyGems Guides 上的 [*What is a gem?*](https://guides.rubygems.org/what-is-a-gem/)
 
 ## 指南
 
