@@ -1,12 +1,11 @@
 #!/usr/bin/env ruby -w
-# coding: utf-8
-#
-# zhengrr
-# 2019-12-31 – 2020-07-20
-# Unlicense
+# frozen_string_literal: true
 
-# shebang 指定 Ruby 解释器，建议带有 -w 参数以启用警告
+# zhengrr
+# 2019-12-31 – 2020-07-27
+# Unlicense
 
 if __FILE__ == $PROGRAM_NAME
   puts 'hello, world'
+  # ......
 end

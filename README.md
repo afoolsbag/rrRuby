@@ -5,29 +5,14 @@
 ## 参考
 
 *   [*Ruby-Doc.org*](https://ruby-doc.org/)
-    *   [Core API](https://ruby-doc.org/core/)
-        *   [Ruby 语法](https://ruby-doc.org/core/doc/syntax_rdoc.html)
-            *   [字面量](https://ruby-doc.org/core/doc/syntax/literals_rdoc.html)
-            *   [赋值](https://ruby-doc.org/core/doc/syntax/assignment_rdoc.html)
-            *   [控制表达式](https://ruby-doc.org/core/doc/syntax/control_expressions_rdoc.html)
-            *   [方法](https://ruby-doc.org/core/doc/syntax/methods_rdoc.html)
-            *   [调用方法](https://ruby-doc.org/core/doc/syntax/calling_methods_rdoc.html)
-            *   [模块和类](https://ruby-doc.org/core/doc/syntax/modules_and_classes_rdoc.html)
-            *   [异常](https://ruby-doc.org/core/doc/syntax/exceptions_rdoc.html)
-            *   [优先级](https://ruby-doc.org/core/doc/syntax/precedence_rdoc.html)
-            *   [改进](https://ruby-doc.org/core/doc/syntax/refinements_rdoc.html)
-            *   [杂项](https://ruby-doc.org/core/doc/syntax/miscellaneous_rdoc.html)
-            *   [注释](https://ruby-doc.org/core/doc/syntax/comments_rdoc.html)
-        *   [正则表达式](https://ruby-doc.org/core/doc/regexp_rdoc.html)
-        *   [关键字](https://ruby-doc.org/core/doc/keywords_rdoc.html)
-        *   [全局变量](https://ruby-doc.org/core/doc/globals_rdoc.html)
-    *   [Standard Library API](https://ruby-doc.org/stdlib/)
-
-*   [“Ruby Quickref”](http://zenspider.com/ruby/quickref.html). *zenspider.com*.
+    *   [Ruby 内核参考](https://ruby-doc.org/core/)
+    *   [Ruby 标准库参考](https://ruby-doc.org/stdlib/)
+*   [*Ruby API*](https://rubyapi.org/)
+*   [*zenspider.com 上的 Ruby Quickref*](http://zenspider.com/ruby/quickref.html)
 
 ## 风格
 
-*   [*The Ruby Style Guide*](https://github.com/rubocop-hq/ruby-style-guide) <sub>
+*   [*The Ruby Style Guide*](https://rubystyle.guide/) <sub>
         [*cmn-Hans*](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md) </sub>
 
 ## 指南

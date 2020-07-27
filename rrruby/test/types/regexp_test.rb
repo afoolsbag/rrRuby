@@ -1,32 +1,30 @@
-#!/usr/bin/env ruby
-# coding: utf-8
-#
+#!/usr/bin/env ruby -w
+# frozen_string_literal: true
+
 # zhengrr
-# 2020-01-02 – 2020-01-02
+# 2020-01-02 – 2020-07-27
 # Unlicense
 
 require 'test/unit'
 
-##
-# 正则表达式
-#
-#   Regexp < Object
-#
-class RegexpTest < Test::Unit::TestCase
-
+module Types
   ##
-  # 正则表达式字面量
+  # 正则表达式
   #
-  # {Regular Expressions}[https://wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Regular_Expressions]
+  #   Regexp < Object
   #
-  def test_regular_expression
-    re = /word_one|word_two/
+  # 参见 {Ruby 内核参考：Regexp}[https://ruby-doc.org/core/Regexp.html]。
+  class RegexpTest < Test::Unit::TestCase
+    ##
+    # 正则表达式字面量
+    def test_regular_expression
+      re = /word_one|word_two/
 
-    assert_match(re, 'word_one')
-    assert_not_nil('word_two' =~ re)
+      assert_match(re, 'word_one')
+      assert_not_nil('word_two' =~ re)
 
-    assert_instance_of(Regexp, re)
-    assert_equal(Object, re.class.superclass)
+      assert_instance_of(Regexp, re)
+      assert_equal(Object, re.class.superclass)
+    end
   end
-
 end

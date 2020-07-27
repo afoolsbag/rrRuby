@@ -1,29 +1,37 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 
-task default: %w[all_until_run]
-
-task :deps do
+# 安装依赖
+task :install_dependencies do
   sh 'bundler install'
 end
 
+# 静态代码分析
+task :lint do
+  sh 'rubocop --except Style/AsciiComments'
+end
+
+# 单元测试
 task :test do
   ruby 'test/run_test.rb'
 end
 
-task all_until_test: [:deps, :test]
-
+# 运行
 task :run do
   ruby 'src/main.rb'
 end
 
-task all_until_run: [:deps, :test, :run]
-
-task :clean_doc do
-  FileUtils.remove_dir('doc/', force = true)
+# 清理文档
+task :clean_documentation do
+  FileUtils.remove_dir('doc/', true)
 end
 
-task :doc do
+# 生成文档
+task :generate_documentation do
   sh 'rdoc'
 end
 
-task redoc: [:clean_doc, :doc]
+# 组合和默认任务
+task doc: %i[clean_documentation generate_documentation]
+task default: %w[install_dependencies lint test doc]

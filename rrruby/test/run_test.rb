@@ -1,5 +1,5 @@
-#!/usr/bin/env ruby
-# coding: utf-8
+#!/usr/bin/env ruby -w
+# frozen_string_literal: true
 
 base_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 lib_dir  = File.join(base_dir, 'lib')
