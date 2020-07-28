@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+# zhengrr
+# 2019-12-31 – 2020-07-28
+# Unlicense
+
 source 'https://gems.ruby-china.com/'
 
+gem 'minitest', require: false
 gem 'rdoc', require: false
+gem 'rspec', require: false
 gem 'rubocop', require: false
-gem 'test-unit', require: false

@@ -26,7 +26,8 @@
 
 ## Awesome
 
-[*Awesome Ruby*](https://awesome-ruby.com/)
+[*Awesome Ruby*](https://awesome-ruby.com/)，
+[*The Ruby Toolbox*](https://www.ruby-toolbox.com/)。
 
 | [*Rake*](https://ruby.github.io/rake/) <sub>
       [*Rakefile*](https://ruby.github.io/rake/doc/rakefile_rdoc.html) </sub>
@@ -46,10 +47,11 @@
       [*Gemfile*](https://bundler.io/man/gemfile.5.html) </sub>
 
 测试
-| [*test-unit*](https://test-unit.github.io/)
+| [*minitest*](https://github.com/seattlerb/minitest)
 | [*RSpec*](https://rspec.info/) <sub>
-      [*better*](http://betterspecs.org/),
-      [*-cmn-Hans*](http://betterspecs.org/zh_cn/) </sub>
+      [*better*](http://www.betterspecs.org/),
+      [*-cmn-Hans*](http://www.betterspecs.org/zh_cn/) </sub>
+| [*test-unit*](https://test-unit.github.io/)
 
 集成开发
 | [*RubyMine*](https://jetbrains.com/ruby/) <sub>

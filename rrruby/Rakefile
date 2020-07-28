@@ -1,38 +1,87 @@
 # frozen_string_literal: true
 
+# https://github.com/ruby/rake
+#
+# zhengrr
+# 2019-12-31 – 2020-07-28
+# Unlicense
+
 require 'fileutils'
+require 'rake/testtask'
+require 'rdoc/task'
+require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
-# 安装依赖
-task :install_dependencies do
+# 安装和更新依赖相关，提供以下任务：
+#
+#   setup
+desc 'Install and update dependencies.'
+task :setup do
   sh 'bundler install'
+  sh 'bundler update --all'
 end
 
-# 静态代码分析
-task :lint do
-  sh 'rubocop --except Style/AsciiComments'
+# 源码静态分析相关，提供以下任务：
+#
+#   rubocop
+#   rubocop:auto_correct
+#
+# 参见 https://rubydoc.info/gems/rubocop/RuboCop/RakeTask。
+RuboCop::RakeTask.new do |task|
+  task.options = %w[--except Style/AsciiComments]
 end
 
-# 单元测试
-task :test do
-  ruby 'test/run_test.rb'
+# 单元测试相关，提供以下任务：
+#
+#   test
+#
+# 参见 https://rubydoc.info/gems/rake/Rake/TestTask。
+Rake::TestTask.new do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/test_*.rb', 'test/**/*_test.rb']
 end
 
-# 运行
+# 行为测试相关，提供以下任务：
+#
+#   spec
+#
+# 参见 https://rubydoc.info/gems/rspec-core/RSpec/Core/RakeTask。
+RSpec::Core::RakeTask.new
+
+# 运行相关，提供以下任务：
+#
+#   run
+desc 'Run "src/main.rb" script'
 task :run do
   ruby 'src/main.rb'
 end
 
-# 清理文档
-task :clean_documentation do
-  FileUtils.remove_dir('doc/', true)
+# 文档生成相关，提供以下任务：
+#
+#   rdoc
+#   clobber_rdoc
+#   rerdoc
+#
+# 参见 https://rubydoc.info/gems/rdoc/RDoc/Task。
+RDoc::Task.new do |rdoc|
+  rdoc.rdoc_dir = 'build/html'
+  rdoc.rdoc_files.include('src/**/*.rdoc', 'lib/**/*.rb')
 end
 
-# 生成文档
-task :generate_documentation do
-  sh 'rdoc'
-end
+# 任务别名、任务链和默认任务
 
-# 组合和默认任务
-task setup: %i[install_dependencies]
-task doc: %i[clean_documentation generate_documentation]
-task default: %i[install_dependencies lint test doc]
+desc 'Alias for rubocop'
+task lint: :rubocop
+
+desc 'Alias for rubocop:auto_correct'
+task formatting: :'rubocop:auto_correct'
+
+desc 'Task chain: lint, test & spec'
+task check: %i[lint test spec]
+
+desc 'Task chain: setup, lint, test, spec & rerdoc'
+task build: %i[setup lint test spec rerdoc]
+
+desc 'Default task, same as build'
+task default: :build
