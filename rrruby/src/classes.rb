@@ -1,14 +1,18 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# 类。
+#
+# 参见 {Ruby 内核参考：Modules and Classes}[https://ruby-doc.org/core/doc/syntax/modules_and_classes_rdoc.html]。
+#
 # zhengrr
-# 2020-04-29 – 2020-07-27
+# 2020-04-29 – 2020-07-30
 # Unlicense
 
 require 'test/unit'
 
 ##
-# 朴素的类
+# 朴素的类。
 class Class
   def initialize(readable_attribute, writable_attribute, accessible_attribute)
     super()
