@@ -34,6 +34,8 @@
 | [*RDoc*](https://ruby.github.io/rdoc/) <sub>
       [*writing-doc*](https://ruby.github.io/rdoc/README_rdoc.html#label-Writing+Documentation),
       [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
+| [*YARD*](https://yardoc.org/) <sub>
+      [*Tags*](https://rubydoc.info/gems/yard/file/docs/Tags.md) </sub>
 | [*Shoes!*](http://shoesrb.com/)
 
 环境管理

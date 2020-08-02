@@ -14,7 +14,7 @@ INTERPOLATION = '#'
 
 # 单引号字符串字面量。
 #
-# 不支持插值，且仅支持单引号（<tt>\\'</tt>）和反斜杠（<tt>\\\\</tt>）转义字符。
+# 不支持插值，且仅支持单引号（<tt>\'</tt>）和反斜杠（<tt>\\</tt>）转义字符。
 #
 # 优先选用此形式。
 _ = 'This is a string enclosed in single-quotes.'

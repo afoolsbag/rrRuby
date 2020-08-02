@@ -1,38 +1,52 @@
 # frozen_string_literal: true
 
+# Copy from rrruby/Rakefile on 2020-07-30.
+
 require 'fileutils'
+require 'rake/testtask'
+require 'rdoc/task'
+require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
-# 安装依赖
-task :install_dependencies do
+desc 'Install and update dependencies.'
+task :setup do
   sh 'bundler install'
+  sh 'bundler update --all'
 end
 
-# 静态代码分析
-task :lint do
-  sh 'rubocop --except Style/AsciiComments'
+RuboCop::RakeTask.new do |task|
+  task.options = %w[--except Style/AsciiComments]
 end
 
-# 单元测试
-task :test do
-  ruby 'test/run_test.rb'
+Rake::TestTask.new do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/test_*.rb', 'test/**/*_test.rb']
 end
 
-# 运行
+RSpec::Core::RakeTask.new
+
+desc 'Run "src/main.rb" script'
 task :run do
   ruby 'src/main.rb'
 end
 
-# 清理文档
-task :clean_documentation do
-  FileUtils.remove_dir('doc/', force = true)
+RDoc::Task.new do |rdoc|
+  rdoc.rdoc_dir = 'build/html'
+  rdoc.rdoc_files.include('src/**/*.rdoc', 'lib/**/*.rb')
 end
 
-# 生成文档
-task :generate_documentation do
-  sh 'rdoc'
-end
+desc 'Alias for rubocop'
+task lint: :rubocop
 
-# 组合和默认任务
-task setup: %i[install_dependencies]
-task doc: %i[clean_documentation generate_documentation]
-task default: %w[install_dependencies lint test doc]
+desc 'Alias for rubocop:auto_correct'
+task formatting: :'rubocop:auto_correct'
+
+desc 'Task chain: lint, test & spec'
+task check: %i[lint test spec]
+
+desc 'Task chain: setup, lint, test, spec & rerdoc'
+task build: %i[setup lint test spec rerdoc]
+
+desc 'Default task, same as build'
+task default: :build
