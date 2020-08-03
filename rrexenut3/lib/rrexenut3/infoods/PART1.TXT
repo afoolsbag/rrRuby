@@ -281,7 +281,7 @@
      Unit: mcg
      Synonyms: provitamin A carotenoids
       Comments: This value is the sum of the
-          beta-carotene plus ½ the quantity of the
+          beta-carotene plus the quantity of the
           other carotenoids with vitamin A activity.
      Tables: USDA 320, NE, EA
 

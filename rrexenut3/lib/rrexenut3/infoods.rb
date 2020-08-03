@@ -8,8 +8,8 @@
 require 'roo'
 require 'roo-xls'
 
-require 'infoods/tag_information'
-require 'infoods/txt_parser'
+require 'rrexenut3/infoods/tagname'
+require 'rrexenut3/infoods/txt_parser'
 
 module RrExeNut3
   ##
@@ -18,113 +18,116 @@ module RrExeNut3
     ##
     # 将信息插入标签集。
     #
-    # @param info [TagInformation] 标签信息
-    # @param tag_set [Hash{Symbol=>TagInformation}] 标签集
+    # @param tagname [Tagname, nil] 标签
+    # @param tagnames [Hash{Symbol=>Tagname}] 标签集
     # @return [void]
-    def self.insert_info_to_tag_set(info, tag_set)
-      return if info.nil?
+    def self.insert_tagname_to_tagnames(tagname, tagnames)
+      return if tagname.nil?
 
-      sym = info.tag.to_sym
-      raise %(Infoods tag "#{sym}" redefine) if tag_set.key?(sym)
+      sym = tagname.tagname.to_sym
+      # raise %(Infoods tagname "#{sym}" re-defined) if tagnames.key?(sym)
 
-      tag_set[sym] = info
+      tagnames[sym] = tagname
     end
 
     ##
-    # 从 .txt 文件中加载标签信息。
+    # 从 .txt 文件中加载标签。
     #
-    # @param txt_file [String] 文件路径
-    # @param tag_set [Hash{Symbol=>TagInformation}] 标签集
-    def self.load_tags_from_txt(txt_file, tag_set)
+    # @param txt_path [String] <tt>.txt</tt> 文件路径
+    # @param tagnames [Hash{Symbol=>TagInformation}] 标签集
+    def self.load_tagnames_from_txt(txt_path, tagnames)
       parser = TxtParser.new
-      File.readlines(txt_file).each do |line|
-        info = parser.feed(line)
-        insert_info_to_tag_set(info, tag_set)
+      File.readlines(txt_path).each do |line|
+        tagname = parser.feed(line)
+        insert_tagname_to_tagnames(tagname, tagnames)
       end
-      info = parser.feed(nil)
-      insert_info_to_tag_set(info, tag_set)
+      tagname = parser.flush
+      insert_tagname_to_tagnames(tagname, tagnames)
     end
 
     ##
-    # 从 .xls 文件中加载标签信息。
+    # 从 .xls 文件中加载标签。
     #
     # 其表名为 +TAGNAMES+，表列与字段的对应为：
     #
-    #   TAGNAME           -> :tag
-    #   Short description -> :briefs[#]
-    #   Description       -> :detail
+    #   TAGNAME           -> :tagname
+    #   Short description ->  _
+    #   Description       -> :name
     #   Recommended units -> :unit
     #   Comment           -> :comment
-    #   SYNONYMS          -> :briefs[#]
+    #   SYNONYMS          -> :synonyms
     #
-    # @param xls_file [String] 文件路径
-    # @param tag_set [Hash{Symbol=>TagInformation}] 标签集
+    # @param xls_path [String] <tt>.xls</tt> 文件路径
+    # @param tagnames [Hash{Symbol=>TagInformation}] 标签集
     #
     # FIXME: 预设文档符合约定，未进行健壮性测试。
-    def self.load_tags_from_xls(xls_file, tag_set)
-      xls = Roo::Spreadsheet.open(xls_file, mode: 'rb')
+    #--
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    #++
+    def self.load_tagnames_from_xls(xls_path, tagnames)
+      xls = Roo::Spreadsheet.open(xls_path, mode: 'rb')
       sheet = xls.sheet('TAGNAMES')
-      sheet.each(clean: true, tagname: 'TAGNAME',
-                 short_description: 'Short description',
+      sheet.each(clean: true,
+                 tagname: 'TAGNAME',
                  description: 'Description',
                  recommended_units: 'Recommended units',
                  comment: 'Comment',
                  synonyms: 'SYNONYMS') do |hash|
         next if hash[:tagname].nil? || hash[:tagname].empty? || hash[:tagname] == 'TAGNAME'
 
-        info = TagInformation.new
-        info.tag = hash[:tagname]
-        info.briefs = [hash[:short_description]]
-        info.detail = hash[:description]
-        info.unit = hash[:recommended_units]
-        info.comment = hash[:comment]
-        unless hash[:synonyms].nil?
-          more_briefs = hash[:synonyms].tr(';', '').split(%r{\s*,\s*})
-          info.briefs.concat(more_briefs)
-        end
+        tagname = Tagname.new
+        tagname.tagname = hash[:tagname]&.gsub(/s+/, ' ')&.strip
+        tagname.name = hash[:description]&.gsub(/s+/, ' ')&.strip
+        tagname.unit = hash[:recommended_units]&.gsub(/s+/, ' ')&.strip
+        tagname.synonyms = hash[:synonyms].gsub(/s+/, ' ').strip.split(/\s*,\s*/) unless hash[:synonyms].nil?
+        tagname.comments = hash[:comment]&.gsub(/s+/, ' ')&.strip
 
-        insert_info_to_tag_set(info, tag_set)
+        insert_tagname_to_tagnames(tagname, tagnames)
       end
     end
 
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
     ##
     # 从各既定数据源中加载标签信息。
+    #
+    # @return [Hash{Symbol=>TagInformation}] 标签集
     #--
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     #++
-    def self.load_tags_from_established_files
+    def self.load_tagnames_from_established_files
       base_dir = File.expand_path('infoods', __dir__)
-      tags = {}
+      tagnames = {}
 
       part1_file = File.join(base_dir, 'PART1.TXT')
-      load_tags_from_txt(part1_file, tags)
+      load_tagnames_from_txt(part1_file, tagnames)
 
       part2_file = File.join(base_dir, 'PART2.TXT')
-      load_tags_from_txt(part2_file, tags)
+      load_tagnames_from_txt(part2_file, tagnames)
 
       part3_file = File.join(base_dir, 'PART3.TXT')
-      load_tags_from_txt(part3_file, tags)
+      load_tagnames_from_txt(part3_file, tagnames)
 
       part4_file = File.join(base_dir, 'PART4.TXT')
-      load_tags_from_txt(part4_file, tags)
+      load_tagnames_from_txt(part4_file, tagnames)
 
       part5_file = File.join(base_dir, 'PART5.TXT')
-      load_tags_from_txt(part5_file, tags)
+      load_tagnames_from_txt(part5_file, tagnames)
 
-      addendum2008_file = File.join(base_dir, 'TAGREV__1_without_hyperlink.xls')
-      load_tags_from_xls(addendum2008_file, tags)
+      addendum2008_file = File.join(base_dir, 'TAGREV__1.xls')
+      load_tagnames_from_xls(addendum2008_file, tagnames)
 
-      addendum2010_file = File.join(base_dir, 'Tagname_new_April_2010-web__2_without_hyperlink.xls')
-      load_tags_from_xls(addendum2010_file, tags)
+      addendum2010_file = File.join(base_dir, 'Tagname_new_April_2010-web__2.xls')
+      load_tagnames_from_xls(addendum2010_file, tagnames)
 
-      tags
+      tagnames
     end
 
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
-  end
 
-  unless defined? RrExeNut3::INFOODS_TAGS
-    RrExeNut3::INFOODS_TAGS = RrExeNut3.load_infoods_tags_from_established_files
-    RrExeNut3::INFOODS_TAGS.freeze
+    unless defined? RrExeNut3::Infoods::TAGNAMES
+      RrExeNut3::Infoods::TAGNAMES = RrExeNut3::Infoods.load_tagnames_from_established_files
+      RrExeNut3::Infoods::TAGNAMES.freeze
+    end
   end
 end

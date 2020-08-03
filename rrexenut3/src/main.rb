@@ -2,8 +2,10 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-24 – 2020-07-27
+# 2020-07-24 – 2020-08-03
 # Unlicense
+
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
 require 'colorize'
 require 'date'
