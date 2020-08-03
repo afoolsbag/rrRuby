@@ -36,7 +36,6 @@
       [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
 | [*YARD*](https://yardoc.org/) <sub>
       [*Tags*](https://rubydoc.info/gems/yard/file/docs/Tags.md) </sub>
-| [*Shoes!*](http://shoesrb.com/)
 
 环境管理
 | [*rbenv*](https://github.com/rbenv/rbenv),

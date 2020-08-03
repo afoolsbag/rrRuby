@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-28 – 2020-07-31
+# 2020-07-28 – 2020-08-03
 # Unlicense
 
 require 'roo'
@@ -62,7 +62,7 @@ module RrExeNut3
     #
     # FIXME: 预设文档符合约定，未进行健壮性测试。
     #--
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     #++
     def self.load_tagnames_from_xls(xls_path, tagnames)
       xls = Roo::Spreadsheet.open(xls_path, mode: 'rb')
@@ -86,7 +86,7 @@ module RrExeNut3
       end
     end
 
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     ##
     # 从各既定数据源中加载标签信息。

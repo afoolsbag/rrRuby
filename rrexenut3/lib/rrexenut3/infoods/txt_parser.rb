@@ -32,7 +32,7 @@ module RrExeNut3
       #++
       def feed(line)
         return if line.strip.empty?
-        return if @cache_tagname.nil? && !(line =~ /^<\w+-?>/)
+        return if @cache_tagname.nil? && line !~ /^<\w+-?>/
 
         case line
         when /^<(\w+-?)>(.*)/
@@ -46,7 +46,7 @@ module RrExeNut3
           @cache_tagname.name = Regexp.last_match(2)
           @current_field = :name
 
-          return tmp
+          return tmp # rubocop:disable Style/RedundantReturn
 
         when /^\s+[Uu]nits?:? (.*)/
           # ^ {U|u}nit[s]: this_is_unit
@@ -54,7 +54,7 @@ module RrExeNut3
           @cache_tagname.unit = Regexp.last_match(1)
           @current_field = :unit
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Synonyms: (.*)/
           # ^ Synonyms: this_is_synonyms
@@ -62,7 +62,7 @@ module RrExeNut3
           @cache_tagname.synonyms = Regexp.last_match(1)
           @current_field = :synonyms
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Comments: (.*)/
           # ^ Comments: this_is_comments
@@ -70,7 +70,7 @@ module RrExeNut3
           @cache_tagname.comments = Regexp.last_match(1)
           @current_field = :comments
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Tables: (.*)/
           # ^ Tables: this_is_tables
@@ -78,7 +78,7 @@ module RrExeNut3
           @cache_tagname.tables = Regexp.last_match(1) # 临时地存储为字符串，在规则化时再分割为数组
           @current_field = :tables
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Note: (.*)/
           # ^ Note: this_is_notes
@@ -86,7 +86,7 @@ module RrExeNut3
           @cache_tagname.notes = Regexp.last_match(1)
           @current_field = :notes
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Keywords: (.*)/
           # ^ Keywords: this_is_keywords
@@ -94,7 +94,7 @@ module RrExeNut3
           @cache_tagname.keywords = Regexp.last_match(1)
           @current_field = :keywords
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         when /^\s+Examples: (.*)/
           # ^ Examples: this_is_examples
@@ -102,12 +102,12 @@ module RrExeNut3
           @cache_tagname.examples = Regexp.last_match(1)
           @current_field = :examples
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         else
           @cache_tagname[@current_field] += line
 
-          return nil
+          return nil # rubocop:disable Style/RedundantReturn
 
         end
       end
