@@ -13,7 +13,7 @@ module RrExeNut3
   class InfoodsTest < Minitest::Test
     def test_that_kitty_can_eat
       tagnames = RrExeNut3::Infoods::TAGNAMES
-      p tagnames[:'WATER']
+      p tagnames[:WATER]
     end
   end
 end

@@ -6,6 +6,10 @@ gem 'colorize'
 gem 'roo'
 gem 'roo-xls'
 gem 'ruby-units'
+# SQLite 需要本机扩展，在 Windows 环境下需要 MSYS2 和编译环境的支持：
+#   λ msys2
+#   $ pacman -S base-devel mingw-w64-x86_64-gcc
+gem 'sqlite3'
 
 gem 'minitest', require: false
 gem 'rdoc', require: false
