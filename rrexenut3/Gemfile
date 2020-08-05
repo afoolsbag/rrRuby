@@ -3,6 +3,7 @@
 source 'https://gems.ruby-china.com/'
 
 gem 'colorize'
+gem 'rb-readline'
 gem 'roo'
 gem 'roo-xls'
 gem 'ruby-units'

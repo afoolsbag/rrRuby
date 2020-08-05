@@ -15,8 +15,9 @@ module RrExeNut3
   # rubocop:disable Metrics/ClassLength
   #++
   class CommandLineInterfaceSession
+    attr_reader :focus_date
+
     def initialize
-      @muted_text_color = :light_black
       @information_text_color = :light_cyan
       @warning_text_color = :light_yellow
       @success_text_color = :light_green
@@ -32,7 +33,7 @@ module RrExeNut3
     #
     # @param target [Date] 目标日期
     # @param origin [Date] 原点日期
-    # @return [String. nil]
+    # @return [String, nil]
     #--
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     #++
@@ -70,7 +71,7 @@ module RrExeNut3
       end
 
       if target.cweek == (origin - 7).cweek
-        case target.cweek
+        case target.cwday
         when 1
           return '上周一'
         when 2
@@ -103,8 +104,8 @@ module RrExeNut3
     # rubocop:disable Metrics/AbcSize
     #++
     def prompt_text
-      focus_date_suffix = RrExeNut3::CommandLineInterfaceSession.relative_date_name(@focus_date)
-      focus_date_suffix = '(' + focus_date_suffix + ')' if focus_date_suffix
+      focus_date_suffix = RrExeNut3::CommandLineInterfaceSession.relative_date_name(@focus_date) || ''
+      focus_date_suffix = '(' + focus_date_suffix + ')' unless focus_date_suffix.empty?
       ColorizedString.new(
         ColorizedString[@profile_name].colorize(:green) + ' ' + \
         ColorizedString['RrExeNut3'].colorize(:magenta) + ' ' + \
@@ -118,16 +119,7 @@ module RrExeNut3
     #
     # @return [ColorizedString]
     def prompt_sign
-      ColorizedString['¿'].colorize(:light_white)
-    end
-
-    ##
-    # 静音文本。
-    #
-    # @param text [String] 原始文本
-    # @return [ColorizedString] 富文本
-    def mute(text)
-      ColorizedString[text].colorize(@muted_text_color)
+      ColorizedString['Δ'].colorize(:light_white)
     end
 
     ##

@@ -7,159 +7,263 @@
 
 $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
+require 'abbrev'
 require 'colorized_string'
 require 'date'
+require 'readline'
 
 require 'rrexenut3/command_line_interface_session'
 
 ##
-# 帮助。
+# 命令模块。
 #
-# @param args [Array<String>] 命令行参数
-# @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
-# @return [void]
-#--
-# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-#++
-def show_help(args, sess)
-  _ = args
-  puts '当前可以理解的命令有：'
-  puts '  <                            ' + sess.mute('切换到前一天')
-  puts '  >                            ' + sess.mute('切换到后一天')
-  puts '  ?                            ' + sess.mute('帮助')
-  puts '  clear                        ' + sess.mute('清空屏幕')
-  puts '  close                        ' + sess.mute('退出程序')
-  puts '  cls                          ' + sess.mute('清空屏幕')
-  puts '  change <date>                ' + sess.mute('切换到某一天')
-  puts '  do <exercise> <amount>       ' + sess.mute('运动，录入当日活动')
-  puts '  drink <drink> <intake>       ' + sess.mute('饮水，录入当日活动')
-  puts '  eat <food> <intake>          ' + sess.mute('进食，录入当日活动')
-  puts '  exercise <exercise> <amount> ' + sess.mute('运动，录入当日活动')
-  puts '  exit                         ' + sess.mute('退出程序')
-  puts '  help                         ' + sess.mute('帮助')
-  puts '  ingest <substance> <intake>  ' + sess.mute('摄入，录入当日活动')
-  puts '  l                            ' + sess.mute('列出当日活动')
-  puts '  list                         ' + sess.mute('列出当日活动')
-  puts '  ll                           ' + sess.mute('列出当日活动')
-  puts '  ls                           ' + sess.mute('列出当日活动')
-  puts '  load <profile>               ' + sess.mute('加载档案')
-  puts '  new <profile>                ' + sess.mute('新建档案')
-  puts '  next                         ' + sess.mute('切换到后一天')
-  puts '  prev                         ' + sess.mute('切换到前一天')
-  puts '  previous                     ' + sess.mute('切换到前一天')
-  puts '  quit                         ' + sess.mute('退出程序')
-  puts '  remove <activity>            ' + sess.mute('从当日移除一项活动')
-  puts '  rm <activity>                ' + sess.mute('从当日移除一项活动')
-  puts '  sum                          ' + sess.mute('显示当日摘要')
-  puts '  summary                      ' + sess.mute('显示当日摘要')
-  puts '  today                        ' + sess.mute('切换到今天')
-  puts
-end
+# 收集命令，提供命令名到方法的映射。
+module Commands
+  ##
+  # 映射 command => symbol
+  # @return [Hash<String=>Symbol>]
+  @command_symbol_mapping = {}
 
-# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  ##
+  # 映射 symbol => parameters
+  # @return [Hash<Symbol=>Array<String>>]
+  @symbol_parameters_mapping = {}
 
-##
-# 清屏。
-#
-# @param args [Array<String>] 命令行参数
-# @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
-# @return [void]
-def clear_screen(args, sess)
-  _ = args, sess
-  # Console Virtual Terminal Sequences
-  # ESC 2 J 清屏
-  # ESC [ F 将光标移至首行开头
-  print "\e[2J\e[F"
-end
+  ##
+  # 映射 symbol => description
+  # @return [Hash<Symbol=>String>]
+  @symbol_description_mapping = {}
 
-##
-# 加载档案。
-#
-# @param args [Array<String>] 命令行参数
-# @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
-# @return [void]
-def load_profile(args, sess)
-  raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+  ##
+  # 建立映射。
+  #
+  # @param symbol [Symbol] 符号
+  # @param commands [Array<String>] 命令名列表
+  # @param parameters [Array<String>] 参数列表
+  # @param description [String] 描述
+  # @return [void]
+  def self.map(symbol, commands, parameters, description)
+    commands.each { |command| @command_symbol_mapping[command] = symbol }
+    @symbol_parameters_mapping[symbol] = parameters
+    @symbol_description_mapping[symbol] = description
+    nil
+  end
 
-  profile_name = args[1]
+  ##
+  # 调用命令。
+  #
+  # @param command [String] 命令名
+  # @param arguments [Array<String>] 命令行参数
+  # @param session [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [:break, Object] 终止循环标志
+  def self.call(command, arguments, session)
+    raise NameError, %(无法理解 #{command} 命令。) unless @command_symbol_mapping.include?(command)
 
-  sess.load_profile(profile_name)
-  puts sess.succ("档案 #{profile_name} 加载完毕。")
-  puts
-end
+    symbol = @command_symbol_mapping[command]
+    raise %(命令 #{command} 被接受，但其对应方法 #{symbol} 未定义。) unless singleton_methods(false).include?(symbol)
 
-##
-# 新建档案。
-#
-# @param args [Array<String>] 命令行参数
-# @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
-# @return [void]
-def new_profile(args, sess)
-  raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+    singleton_method(symbol).call(arguments, session)
+  end
 
-  profile_name = args[1]
+  map(:change, %w[change], ['date'], '切换到某一天')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.change(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
 
-  sess.new_profile(profile_name)
-  puts sess.succ("档案 #{profile_name} 新建完毕。")
-  puts
+    sess.change_focus_date(Date.parse(args[1]))
+    puts sess.succ("切换到#{sess.focus_date.year}年#{sess.focus_date.month}月#{sess.focus_date.day}日。")
+    puts
+  end
+
+  map(:clear, %w[clear cls], [], '清空屏幕')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.clear(_, _)
+    # Console Virtual Terminal Sequences
+    # ESC 2 J 清屏
+    # ESC [ F 将光标移至首行开头
+    print "\e[2J\e[F"
+  end
+
+  map(:exercise, %w[do exercise], %w[exercise_id amount], '运动，录入当日活动')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.exercise; end
+
+  map(:help, %w[? help], [], '帮助')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  #--
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  #++
+  def self.help(_args, _sess)
+    usage_width = 0
+    @command_symbol_mapping.each do |cmd, sym|
+      usage_len = cmd.length + (@symbol_parameters_mapping[sym].map { |str| 3 + str.length }.reduce(:+) || 0)
+      usage_width = usage_len if usage_width < usage_len
+    end
+
+    puts '当前可以理解的命令有：'
+    @command_symbol_mapping.sort_by(&:first).to_h.each do |cmd, sym|
+      params = @symbol_parameters_mapping[sym]
+      desc = @symbol_description_mapping[sym]
+
+      usage_len = cmd.length + (params.map { |str| 3 + str.length }.reduce(:+) || 0)
+      usage_padding = ' ' * (usage_width - usage_len)
+
+      colorized_usage = ColorizedString[cmd].colorize(:default)
+      params.each do |param|
+        colorized_usage = colorized_usage + ' <' + ColorizedString[param].colorize(:light_black) + '>'
+      end
+      colorized_desc = ColorizedString[desc].colorize(:light_black)
+      puts "  #{colorized_usage}#{usage_padding} #{colorized_desc}"
+    end
+    puts
+  end
+
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+  map(:ingest, %w[drink eat ingest], %w[food_id intake], '摄入，录入当日活动')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.ingest; end
+
+  map(:list, %w[list ll ls], [], '列出当日活动')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.list; end
+
+  map(:load_profile, %w[load_profile], ['profile_name'], '加载档案')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.load_profile(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+
+    profile_name = args[1]
+
+    sess.load_profile(profile_name)
+    puts sess.succ("档案 #{profile_name} 加载完毕。")
+    puts
+  end
+
+  map(:new_profile, %w[new_profile], ['profile_name'], '新建档案')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.new_profile(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+
+    profile_name = args[1]
+
+    sess.new_profile(profile_name)
+    puts sess.succ("档案 #{profile_name} 新建完毕。")
+    puts
+  end
+
+  map(:next, %w[> next], [], '切换到后一天')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.next(args, sess)
+    args[1] = (sess.focus_date + 1).iso8601
+    change(args, sess)
+  end
+
+  map(:previous, %w[< previous], [], '切换到前一天')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.previous(args, sess)
+    args[1] = (sess.focus_date - 1).iso8601
+    change(args, sess)
+  end
+
+  map(:quit, %w[close exit quit], [], '退出程序')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [Symbol] 循环终止标志
+  def self.quit(_args, _sess)
+    :break
+  end
+
+  map(:remove, %w[delete remove rm], ['activity'], '从当日移除一项活动')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.remove; end
+
+  map(:summary, %w[summary], [], '显示当日摘要')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.summary; end
+
+  map(:today, %w[= today], [], '切换到今天')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
+  # @return [void]
+  def self.today(args, sess)
+    args[1] = Date.today.iso8601
+    change(args, sess)
+  end
+
+  COMMANDS = @command_symbol_mapping.keys
+  COMMAND_ABBREV_MAPPING = COMMANDS.abbrev
 end
 
 if __FILE__ == $PROGRAM_NAME
-  cli_sess = RrExeNut3::CommandLineInterfaceSession.new
+  # Readline 相关
+  Readline.completer_word_break_characters = "\n"
+  Readline.completion_proc = proc { |text| Commands::COMMANDS.grep(/^#{Regexp.escape(text)}/) }
+  Readline.completion_append_character = ''
+
+  # 档案相关
+  sess = RrExeNut3::CommandLineInterfaceSession.new
 
   # 自动加载工作目录下，找到的首个档案
   Dir.new('.').each do |filename|
     if filename =~ /(.*)\.rrexenut3\.profile$/
-      cli_sess.load_profile(Regexp.last_match(1))
+      sess.load_profile(Regexp.last_match(1))
       break
     end
   end
 
-  # rubocop:disable Metrics/BlockLength
+  # 命令行循环
   loop do
-    print cli_sess.prompt_text, ' ', cli_sess.prompt_sign, ' '
-    cmd_line = gets
-    cmd_args = cmd_line.gsub(/\s+/m, ' ').strip.split(' ')
+    line = Readline.readline(sess.prompt_text + ' ' + sess.prompt_sign + ' ', true)
+    args = line.gsub(/\s+/m, ' ').strip.split(' ')
+    next if args[0].nil?
+
+    cmd = Commands::COMMAND_ABBREV_MAPPING[args[0]] || args[0]
 
     begin
-      case cmd_args[0]
-      when nil
-        nil
-      when '<', 'prev', 'previous'
-        change_to_previous_day(cmd_args, cli_sess)
-      when '>', 'next'
-        change_to_next_day(cmd_args, cli_sess)
-      when '?', 'help'
-        show_help(cmd_args, cli_sess)
-      when 'clear', 'cls'
-        clear_screen(cmd_args, cli_sess)
-      when 'close', 'exit', 'quit'
-        break
-      when 'do', 'exercise'
-        record_exercise(cmd_args, cli_sess)
-      when 'drink', 'eat', 'ingest'
-        record_ingestion(cmd_args, cli_sess)
-      when 'l', 'list', 'll', 'ls'
-        show_activities(cmd_args, cli_sess)
-      when 'load'
-        load_profile(cmd_args, cli_sess)
-      when 'new'
-        new_profile(cmd_args, cli_sess)
-      when 'remove', 'rm'
-        remove_activity(cmd_args, cli_sess)
-      when 'sum', 'summary'
-        show_summary(cmd_args, cli_sess)
-      when 'today'
-        change_to_today(cmd_args, cli_sess)
-      else
-        puts cli_sess.fai1('无法理解 ' + cmd_args[0] + ' 命令。')
-        puts '键入 help 命令获取帮助。'
-        puts
-      end
+      break if Commands.call(cmd, args, sess) == :break
     rescue StandardError => e
-      puts cli_sess.fai1(e.message)
+      puts sess.fai1(e.message)
+      # puts e.backtrace.inspect
       puts
     end
   end
-  # rubocop:enable Metrics/BlockLength
 end
