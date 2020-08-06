@@ -103,7 +103,7 @@ module Commands
   # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
   # @return [void]
   #--
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   #++
   def self.help(_args, _sess)
     usage_width = 0
@@ -130,7 +130,7 @@ module Commands
     puts
   end
 
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   map(:ingest, %w[drink eat ingest], %w[food_id intake], '摄入，录入当日活动')
   ##

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-31 – 2020-07-31
+# 2020-07-31 – 2020-08-06
 # Unlicense
 
 require 'rrexenut3/infoods/tagname'
@@ -15,100 +15,49 @@ module RrExeNut3
     # 从 +.txt+ 文件中解析标签信息。
     #
     # FIXME: 预设文档符合约定，未进行健壮性测试。
+    #--
+    # rubocop:disable Metrics/ClassLength
+    #++
     class TxtParser
+      ##
+      # 初始化。
       def initialize
         super()
-        @cache_tagname = nil
-        @current_field = nil
+        @cache = nil
+        @field = nil
       end
 
       ##
       # 喂入一行文本。
       #
-      # @param line [String]
+      # @param line [String] 一行文本
       # @return [Tagname, nil]
       #--
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
       #++
       def feed(line)
+        # 略过空行
         return if line.strip.empty?
-        return if @cache_tagname.nil? && line !~ /^<\w+-?>/
 
         case line
-        when /^<(\w+-?)>(.*)/
-          # ^<this_is_tagname> this_is_name
-          # 新的一项，归一化缓存，输出结果
-          tmp = normalize
-
-          @cache_tagname = Tagname.new
-          @cache_tagname.tagname = Regexp.last_match(1)
-
-          @cache_tagname.name = Regexp.last_match(2)
-          @current_field = :name
-
-          return tmp # rubocop:disable Style/RedundantReturn
-
-        when /^\s+[Uu]nits?:? (.*)/
-          # ^ {U|u}nit[s]: this_is_unit
-          # 单位字段
-          @cache_tagname.unit = Regexp.last_match(1)
-          @current_field = :unit
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Synonyms: (.*)/
-          # ^ Synonyms: this_is_synonyms
-          # 别名字段
-          @cache_tagname.synonyms = Regexp.last_match(1)
-          @current_field = :synonyms
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Comments: (.*)/
-          # ^ Comments: this_is_comments
-          # 注解字段
-          @cache_tagname.comments = Regexp.last_match(1)
-          @current_field = :comments
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Tables: (.*)/
-          # ^ Tables: this_is_tables
-          # 已知的引用该标签的表，字段
-          @cache_tagname.tables = Regexp.last_match(1) # 临时地存储为字符串，在规则化时再分割为数组
-          @current_field = :tables
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Note: (.*)/
-          # ^ Note: this_is_notes
-          # 说明字段
-          @cache_tagname.notes = Regexp.last_match(1)
-          @current_field = :notes
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Keywords: (.*)/
-          # ^ Keywords: this_is_keywords
-          # 关键字字段
-          @cache_tagname.keywords = Regexp.last_match(1)
-          @current_field = :keywords
-
-          return nil # rubocop:disable Style/RedundantReturn
-
-        when /^\s+Examples: (.*)/
-          # ^ Examples: this_is_examples
-          # 示例字段
-          @cache_tagname.examples = Regexp.last_match(1)
-          @current_field = :examples
-
-          return nil # rubocop:disable Style/RedundantReturn
-
+        when /^<(\w+-?)>(.*)$/
+          parse_new_tag_line(Regexp.last_match(1).to_s, Regexp.last_match(2).to_s)
+        when /^\s+[Uu]nits?:? (.*)$/
+          parse_unit_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Synonyms: (.*)$/
+          parse_synonyms_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Comments: (.*)$/
+          parse_comments_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Tables: (.*)$/
+          parse_tables_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Note: (.*)$/
+          parse_notes_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Keywords: (.*)$/
+          parse_keywords_field_line(Regexp.last_match(1).to_s)
+        when /^\s+Examples: (.*)$/
+          parse_examples_field_line(Regexp.last_match(1).to_s)
         else
-          @cache_tagname[@current_field] += line
-
-          return nil # rubocop:disable Style/RedundantReturn
-
+          parse_other_line(line)
         end
       end
 
@@ -125,31 +74,175 @@ module RrExeNut3
       private
 
       ##
+      # 解析新标签行。
+      #
+      #   ^<TAGNAME[-]>part_of_name$
+      #
+      # @param tagname [String] 标签名
+      # @param part_of_name [String] 名称的一部分
+      # @return [Tagname, nil]
+      def parse_new_tag_line(tagname, part_of_name)
+        rv = normalize
+        @cache = Tagname.new
+        @cache.tagname = tagname
+        @cache.name = part_of_name
+        @field = :name
+        rv
+      end
+
+      ##
+      # 解析单位字段行。
+      #
+      #   ^ [Uu]nit[s][:] part_of_unit$
+      #
+      # @param part_of_unit [String] 单位的一部分
+      # @return [nil]
+      def parse_unit_field_line(part_of_unit)
+        return if @cache.nil?
+
+        @cache.unit = part_of_unit
+        @field = :unit
+        nil
+      end
+
+      ##
+      # 解析别名字段行。
+      #
+      #   ^ Synonyms: part_of_synonyms$
+      #
+      # @param part_of_synonyms [String] 别名的一部分
+      # @return [nil]
+      def parse_synonyms_field_line(part_of_synonyms)
+        return if @cache.nil?
+
+        @cache.synonyms = part_of_synonyms
+        @field = :synonyms
+        nil
+      end
+
+      ##
+      # 解析注解字段行。
+      #
+      #   ^ Comments: part_of_comments$
+      #
+      # @param part_of_comments [String] 别名的一部分
+      # @return [nil]
+      def parse_comments_field_line(part_of_comments)
+        return if @cache.nil?
+
+        @cache.comments = part_of_comments
+        @field = :comments
+        nil
+      end
+
+      ##
+      # 解析已知表字段行。
+      #
+      #   ^ Tables: part_of_tables$
+      #
+      # @param part_of_tables [String] 已知表的一部分
+      # @return [nil]
+      def parse_tables_field_line(part_of_tables)
+        return if @cache.nil?
+
+        @cache.tables = part_of_tables
+        @field = :tables
+        nil
+      end
+
+      ##
+      # 解析说明字段行。
+      #
+      #   ^ Note: part_of_notes$
+      #
+      # @param part_of_notes [String] 说明的一部分
+      # @return [nil]
+      def parse_notes_field_line(part_of_notes)
+        return if @cache.nil?
+
+        @cache.notes = part_of_notes
+        @field = :notes
+        nil
+      end
+
+      ##
+      # 解析关键字字段行。
+      #
+      #   ^ Keywords: part_of_keywords$
+      #
+      # @param part_of_keywords [String] 已知表的一部分
+      # @return [nil]
+      def parse_keywords_field_line(part_of_keywords)
+        return if @cache.nil?
+
+        @cache.keywords = part_of_keywords
+        @field = :keywords
+        nil
+      end
+
+      ##
+      # 解析已知表字段行。
+      #
+      #   ^ Examples: part_of_examples$
+      #
+      # @param part_of_examples [String] 已知表的一部分
+      # @return [nil]
+      def parse_examples_field_line(part_of_examples)
+        return if @cache.nil?
+
+        @cache.examples = part_of_examples
+        @field = :examples
+        nil
+      end
+
+      ##
+      # 解析其它行。
+      #
+      # @param line [String] 一行文本
+      # @return [nil]
+      def parse_other_line(line)
+        return if @cache.nil?
+
+        @cache[@field] += line
+        nil
+      end
+
+      ##
       # 归一化缓存，输出结果。
       #
       # @return [Tagname, nil]
       #--
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       #++
       def normalize
-        return if @cache_tagname.nil?
+        return if @cache.nil?
 
-        tmp = @cache_tagname
-        @cache_tagname = nil
+        rv = @cache
+        @cache = nil
 
-        tmp.name&.gsub!(/\s+/, ' ')&.strip!
-        tmp.unit = tmp.unit.split('.').first.strip
-        tmp.synonyms = tmp.synonyms.gsub(/\s+/, ' ').strip.split(/\s*[,;]\s/) unless tmp.synonyms.nil?
-        tmp.comments&.gsub!(/\s+/, ' ')&.strip!
-        tmp.tables = nil
-        tmp.notes = nil
-        tmp.keywords = nil
-        tmp.examples = nil
+        # 移除名称的多余空白
+        rv.name = rv.name.gsub(/\s+/, ' ').strip
+        # 移除单位后随的说明
+        rv.unit = rv.unit.split('.').first.strip
+        # 移除别名的多余空白，并按 , 和 ; 分割
+        rv.synonyms = rv.synonyms.gsub(/\s+/, ' ').strip.split(/\s*[,;]\s*/) unless rv.synonyms.nil?
+        # 移除注解的多余空白
+        rv.comments = rv.comments.gsub(/\s+/, ' ').strip unless rv.comments.nil?
+        # 暂不解析该项
+        rv.tables = nil
+        # 暂不解析该项
+        rv.notes = nil
+        # 暂不解析该项
+        rv.keywords = nil
+        # 暂不解析该项
+        rv.examples = nil
 
-        tmp
+        rv
       end
 
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
+
+    # rubocop:enable Metrics/ClassLength
   end
 end

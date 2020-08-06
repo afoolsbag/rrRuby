@@ -2,17 +2,25 @@
 
 source 'https://gems.ruby-china.com/'
 
-gem 'colorize'
-gem 'rb-readline'
-gem 'roo'
-gem 'roo-xls'
-gem 'ruby-units'
-# SQLite 需要本机扩展，在 Windows 环境下需要 MSYS2 和编译环境的支持：
-#   λ msys2
-#   $ pacman -S base-devel mingw-w64-x86_64-gcc
-gem 'sqlite3'
+group :production do
+  gem 'colorize'
+  gem 'rb-readline'
+  gem 'roo'
+  gem 'roo-xls'
+  gem 'ruby-units'
+  # SQLite 需要本机扩展，在 Windows 环境下需要 MSYS2 和编译环境的支持：
+  #   λ msys2
+  #   $ pacman -S base-devel mingw-w64-x86_64-gcc
+  gem 'sqlite3'
+end
 
-gem 'minitest', require: false
-gem 'rdoc', require: false
-gem 'rspec', require: false
-gem 'rubocop', require: false
+group :test do
+  gem 'minitest', require: false
+  gem 'rspec', require: false
+end
+
+group :development do
+  gem 'rdoc', require: false
+  gem 'rubocop', require: false
+  gem 'yard', require: false
+end
