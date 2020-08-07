@@ -2,15 +2,13 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-28 – 2020-08-06
+# 2020-07-28 – 2020-08-07
 # Unlicense
 
 module RrExeNut3
   module Infoods
     ##
     # 标签结构体。
-    #
-    # 为了令 IDE Hinting 识别，使 Tagname 多余地继承自结构体。
     #
     # @!attribute [rw] tagname
     #   @return [String] 标签名
@@ -32,21 +30,11 @@ module RrExeNut3
     #   @return [String, nil] 示例
     #
     # @see http://archive.unu.edu/unupress/unupbooks/80734e/80734E01.htm
-    #--
-    # rubocop:disable Style/StructInheritance
-    #++
-    class Tagname < Struct.new(
-      :tagname,
-      :name,
-      :unit,
-      :synonyms,
-      :comments,
-      :tables,
-      :notes,
-      :keywords,
-      :examples
+    #
+    # HACK: 为了令 IDE Hinting 识别，多余地继承自结构体。
+    class Tagname < Struct.new( # rubocop:disable Style/StructInheritance
+      :tagname, :name, :unit, :synonyms, :comments, :tables, :notes, :keywords, :examples,
+      keyword_init: true
     ); end
-
-    # rubocop:enable Style/StructInheritance
   end
 end
