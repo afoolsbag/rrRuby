@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-31 – 2020-08-06
+# 2020-07-31 – 2020-08-12
 # Unlicense
 
 require 'rrexenut3/infoods/tagname'
@@ -225,9 +225,9 @@ module RrExeNut3
         # 移除单位后随的说明
         rv.unit = rv.unit.split('.').first.strip
         # 移除别名的多余空白，并按 , 和 ; 分割
-        rv.synonyms = rv.synonyms.gsub(/\s+/, ' ').strip.split(/\s*[,;]\s*/) unless rv.synonyms.nil?
+        rv.synonyms &&= rv.synonyms.gsub(/\s+/, ' ').strip.split(/\s*[,;]\s*/)
         # 移除注解的多余空白
-        rv.comments = rv.comments.gsub(/\s+/, ' ').strip unless rv.comments.nil?
+        rv.comments &&= rv.comments.gsub(/\s+/, ' ').strip
         # 暂不解析该项
         rv.tables = nil
         # 暂不解析该项

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-06 – 2020-08-06
+# 2020-08-06 – 2020-08-12
 # Unlicense
 
 require 'roo'
@@ -52,10 +52,10 @@ module RrExeNut3
 
           tagname = Tagname.new
           tagname.tagname = hash[:tagname].gsub(/s+/, ' ').strip
-          tagname.name = hash[:description].gsub(/s+/, ' ').strip unless hash[:description].nil?
-          tagname.unit = hash[:recommended_units].gsub(/s+/, ' ').strip unless hash[:recommended_units].nil?
-          tagname.synonyms = hash[:synonyms].gsub(/s+/, ' ').strip.split(/\s*,\s*/) unless hash[:synonyms].nil?
-          tagname.comments = hash[:comment].gsub(/s+/, ' ').strip unless hash[:comments].nil?
+          tagname.name = hash[:description]&.gsub(/s+/, ' ')&.strip
+          tagname.unit = hash[:recommended_units]&.gsub(/s+/, ' ')&.strip
+          tagname.synonyms = hash[:synonyms]&.gsub(/s+/, ' ')&.strip&.split(/\s*,\s*/)
+          tagname.comments = hash[:comment]&.gsub(/s+/, ' ')&.strip
 
           block.call(tagname)
         end

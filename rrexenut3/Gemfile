@@ -5,12 +5,15 @@ source 'https://gems.ruby-china.com/'
 group :production do
   gem 'colorize'
   gem 'rb-readline'
+  gem 'require_all'
   gem 'roo'
   gem 'roo-xls'
   gem 'ruby-units'
   # SQLite 需要本机扩展，在 Windows 环境下需要 MSYS2 和编译环境的支持：
   #   λ msys2
-  #   $ pacman -S base-devel mingw-w64-x86_64-gcc
+  #   $ pacman -S base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-sqlite3
+  #   $ exit
+  #   λ gen install sqlite3 --platform=ruby
   gem 'sqlite3'
 end
 
