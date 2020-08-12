@@ -42,7 +42,7 @@ module RrExeNut3
     # @param lifestyle [Symbol] 生活方式
     # @param extra_exercise [Boolean] 额外运动
     # @return [void]
-    def initialize(sex:, age:, weight:, # rubocop:disable Metrics/ParameterLists
+    def initialize(sex:, age:, weight:,
                    lifestyle: :sedentary, extra_exercise: false)
       @sex = sex
       @age = age
@@ -58,8 +58,6 @@ module RrExeNut3
     # @return [String] 报告。
     def summary_ascii(nutrients) end
 
-    private
-
     include EnergyDri
     include ProteinDris
     include LipidDris
@@ -68,39 +66,6 @@ module RrExeNut3
     include TraceMineralDris
     include LipidSolubleVitaminDris
     include WaterSolubleVitaminDris
-
-    #---------------------------------------------------------------------------
-    # 水和其他膳食成分
-
-    ##
-    # 饮水的参考摄入量。
-    #
-    # @return [Dri]
-    def drinking_water_dri # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      dri =
-        case @age
-        when 1...4
-          Dri.new
-        when 4...7
-          Dri.new(ai: un('0.8kg/d'))
-        when 7...11
-          Dri.new(ai: un('1kg/d'))
-        when 11...14
-          male? ? Dri.new(ai: un('1.3kg/d')) : Dri.new(ai: un('1.1kg/d'))
-        when 14...18
-          male? ? Dri.new(ai: un('1.4kg/d')) : Dri.new(ai: un('1.2kg/d'))
-        else
-          male? ? Dri.new(ai: un('1.7kg/d')) : Dri.new(ai: un('1.5kg/d'))
-        end
-      dri.ai += un('0.2kg/d') if pregnancy?
-      dri.ai += un('0.6kg/d') if lactation?
-      dri
-    end
-
-    ##
-    # 膳食纤维的参考摄入量。
-    #
-    # @return [Dri]
-    def dietary_fiber_dri; end
+    include OtherDris
   end
 end

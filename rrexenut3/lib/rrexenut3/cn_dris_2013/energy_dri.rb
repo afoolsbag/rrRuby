@@ -12,11 +12,12 @@ module RrExeNut3
   module CnDris2013
     ##
     # 能量的参考摄入量。
-    # Dietary Energy.
     #
     # 膳食中的蛋白质、脂肪和碳水化合物等营养素在人体代谢中产生的能量。
     module EnergyDri
       include Aux
+
+      protected
 
       # 碳水化合物的食物热效应（thermic effect of food），5% ~ 10%
       CHO_TEF = 0.075
@@ -29,9 +30,12 @@ module RrExeNut3
 
       ##
       # 能量的参考摄入量。
+      # DRI of Energy.
+      #
+      #   :'ENER-'
       #
       # @return [Dri]
-      def energy_dri
+      def ener_dri
         dri = Dri.new(eer: @weight * bmr * pal)
         dri.eer += un('50kcal/d') if first_trimester?
         dri.eer += un('300kcal/d') if second_trimester?
@@ -59,7 +63,7 @@ module RrExeNut3
       # 总能量消耗（TEE）与基础能量消耗（BEE）的比值，用以表示身体活动强度。
       #
       # @return [Float]
-      def pal # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+      def pal
         case @age
         when 0...3
           1.35

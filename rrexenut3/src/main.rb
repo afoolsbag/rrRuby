@@ -102,9 +102,6 @@ module Commands
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CommandLineInterfaceSession] 命令行界面会话
   # @return [void]
-  #--
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-  #++
   def self.help(_args, _sess)
     usage_width = 0
     @command_symbol_mapping.each do |cmd, sym|
@@ -122,15 +119,13 @@ module Commands
 
       colorized_usage = ColorizedString[cmd].colorize(:default)
       params.each do |param|
-        colorized_usage = colorized_usage + ' <' + ColorizedString[param].colorize(:light_black) + '>'
+        colorized_usage = "#{colorized_usage} <#{ColorizedString[param].colorize(:light_black)}>"
       end
       colorized_desc = ColorizedString[desc].colorize(:light_black)
       puts "  #{colorized_usage}#{usage_padding} #{colorized_desc}"
     end
     puts
   end
-
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   map(:ingest, %w[drink eat ingest], %w[food_id intake], '摄入，录入当日活动')
   ##
@@ -252,7 +247,7 @@ if __FILE__ == $PROGRAM_NAME
 
   # 命令行循环
   loop do
-    line = Readline.readline(sess.prompt_text + ' ' + sess.prompt_sign + ' ', true)
+    line = Readline.readline("#{sess.prompt_text} #{sess.prompt_sign} ", true)
     args = line.gsub(/\s+/m, ' ').strip.split(' ')
     next if args[0].nil?
 

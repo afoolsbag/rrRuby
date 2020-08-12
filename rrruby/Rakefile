@@ -28,7 +28,7 @@ end
 #
 # 参见 https://rubydoc.info/gems/rubocop/RuboCop/RakeTask。
 RuboCop::RakeTask.new do |task|
-  task.options = %w[--except Style/AsciiComments]
+  task.options = %w[--except Style/AsciiComments --enable-pending-cops]
 end
 
 # 单元测试相关，提供以下任务：

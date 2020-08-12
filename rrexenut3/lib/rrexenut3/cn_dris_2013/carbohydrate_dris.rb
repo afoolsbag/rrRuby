@@ -17,11 +17,16 @@ module RrExeNut3
     module CarbohydrateDris
       include Aux
 
+      protected
+
       ##
       # 碳水化合物的参考摄入量。
+      # DRI of Carbohydrate.
+      #
+      #   :'CHO-'
       #
       # @return [Dri]
-      def carbohydrate_dri # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+      def cho_dri
         dri =
           case @age
           when 0...0.5
@@ -39,7 +44,20 @@ module RrExeNut3
           end
         dri.ear = un('130g/d') if pregnancy?
         dri.ear = un('160g/d') if lactation?
+        dri.lamdr = un('50%')
+        dri.uamdr = un('65%')
         dri
+      end
+
+      ##
+      # 添加糖的参考摄入量。
+      # DRI if Sugar.
+      #
+      #   :SUGAR
+      #
+      # @return [Dri]
+      def sugar_dri
+        Dri.new(uamdr: un('10%'))
       end
     end
   end

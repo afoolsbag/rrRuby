@@ -11,9 +11,6 @@ require 'sqlite3'
 module RrExeNut3
   ##
   # 命令行接口会话。
-  #--
-  # rubocop:disable Metrics/ClassLength
-  #++
   class CommandLineInterfaceSession
     attr_reader :focus_date
 
@@ -34,9 +31,6 @@ module RrExeNut3
     # @param target [Date] 目标日期
     # @param origin [Date] 原点日期
     # @return [String, nil]
-    #--
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-    #++
     def self.relative_date_name(target, origin = Date.today)
       case target
       when origin - 2
@@ -92,27 +86,21 @@ module RrExeNut3
       nil
     end
 
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-
     ##
     # 提示文本。
     #
     #   profile_name RrExeNut3 focus_date
     #
     # @return [ColorizedString]
-    #--
-    # rubocop:disable Metrics/AbcSize
-    #++
     def prompt_text
       focus_date_suffix = RrExeNut3::CommandLineInterfaceSession.relative_date_name(@focus_date) || ''
-      focus_date_suffix = '(' + focus_date_suffix + ')' unless focus_date_suffix.empty?
+      focus_date_suffix = "(#{focus_date_suffix})" unless focus_date_suffix.empty?
       ColorizedString.new(
-        ColorizedString[@profile_name].colorize(:green) + ' ' + \
-        ColorizedString['RrExeNut3'].colorize(:magenta) + ' ' + \
-        ColorizedString[@focus_date.iso8601 + focus_date_suffix].colorize(:yellow)
+        "#{ColorizedString[@profile_name].colorize(:green)} " \
+        "#{ColorizedString['RrExeNut3'].colorize(:magenta)} " \
+        "#{ColorizedString[@focus_date.iso8601 + focus_date_suffix].colorize(:yellow)}"
       )
     end
-    # rubocop:enable Metrics/AbcSize
 
     ##
     # 提示符号。
@@ -177,7 +165,7 @@ module RrExeNut3
     # @param name [String] 档案名
     # @return [void]
     def load_profile(name)
-      path = File.absolute_path(name + '.rrexenut3.profile')
+      path = File.absolute_path("#{name}.rrexenut3.profile")
       raise "档案 #{name} 不存在。" unless File.exist?(path)
 
       @profile_database = SQLite3::Database.new(path)
@@ -192,13 +180,11 @@ module RrExeNut3
     # @param name [String] 档案名
     # @return [void]
     def new_profile(name)
-      path = File.absolute_path(name + '.rrexenut3.profile')
+      path = File.absolute_path("#{name}.rrexenut3.profile")
       raise "档案 #{name} 已存在。" if File.exist?(path)
 
       db = SQLite3::Database.new(path)
       db.close
     end
   end
-
-  # rubocop:enable Metrics/ClassLength
 end

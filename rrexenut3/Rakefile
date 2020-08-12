@@ -15,7 +15,7 @@ task :setup do
 end
 
 RuboCop::RakeTask.new do |task|
-  task.options = %w[--except Style/AsciiComments]
+  # task.options = %w[--except Style/AsciiComments --enable-pending-cops]
 end
 
 Rake::TestTask.new do |t|

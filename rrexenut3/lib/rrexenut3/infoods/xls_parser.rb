@@ -41,9 +41,6 @@ module RrExeNut3
       #
       # @param xls_path [String] +.xls+ 文件路径
       # @param block [Proc<Tagname>] 每当成功解析一项，调用一次
-      #--
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      #++
       def self.parse(xls_path, &block)
         xls = Roo::Spreadsheet.open(xls_path, mode: 'rb')
         sheet = xls.sheet('TAGNAMES')
@@ -60,8 +57,6 @@ module RrExeNut3
           block.call(tagname)
         end
       end
-
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     end
   end
 end

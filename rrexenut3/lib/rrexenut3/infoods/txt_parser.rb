@@ -15,9 +15,6 @@ module RrExeNut3
     # 从 +.txt+ 文件中解析标签信息。
     #
     # FIXME: 预设文档符合约定，未进行健壮性测试。
-    #--
-    # rubocop:disable Metrics/ClassLength
-    #++
     class TxtParser
       ##
       # 初始化。
@@ -32,9 +29,6 @@ module RrExeNut3
       #
       # @param line [String] 一行文本
       # @return [Tagname, nil]
-      #--
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-      #++
       def feed(line)
         # 略过空行
         return if line.strip.empty?
@@ -60,8 +54,6 @@ module RrExeNut3
           parse_other_line(line)
         end
       end
-
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       ##
       # 清空缓存。
@@ -211,9 +203,6 @@ module RrExeNut3
       # 归一化缓存，输出结果。
       #
       # @return [Tagname, nil]
-      #--
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      #++
       def normalize
         return if @cache.nil?
 
@@ -239,10 +228,6 @@ module RrExeNut3
 
         rv
       end
-
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
-
-    # rubocop:enable Metrics/ClassLength
   end
 end
