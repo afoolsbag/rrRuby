@@ -5,7 +5,6 @@ source 'https://gems.ruby-china.com/'
 group :production do
   gem 'colorize'
   gem 'rb-readline'
-  gem 'require_all'
   gem 'roo'
   gem 'roo-xls'
   gem 'ruby-units'

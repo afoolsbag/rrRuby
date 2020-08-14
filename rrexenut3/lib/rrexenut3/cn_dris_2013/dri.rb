@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-14
 # Unlicense
 
 module RrExeNut3
@@ -11,8 +11,18 @@ module RrExeNut3
     # 某膳食营养素的参考摄入量。
     # Dietary Reference Intake.
     #
-    # HACK: 为了令 IDE Hinting 识别，使用原始类而没有使用 +Struct+。
-    class Dri
+    # 可能的数据组合有
+    #   EER
+    #   LAMDR AI(percent) UAMDR
+    #   EAR RNI PI UL
+    #   AI(unit) PI UL
+    #   SPL PI UL
+    #
+    # HACK: 为了令 IDE Hinting 识别，多余地继承自结构体。
+    #--
+    # rubocop:disable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Metrics/BlockLength, Style/StructInheritance
+    #++
+    class Dri < Struct.new(
       # 平均需要量。
       # Estimated Average Requirement.
       #
@@ -21,7 +31,7 @@ module RrExeNut3
       # 特定群体中 50% 个体满足需要的量。
       #
       # @return [Unit, nil]
-      attr_accessor :ear
+      :ear,
 
       # 推荐摄入量。
       # Recommended Nutrient Intake.
@@ -31,7 +41,7 @@ module RrExeNut3
       # 特定群体中 97% 个体满足需要的量，自 EAR 推算。
       #
       # @return [Unit, nil]
-      attr_accessor :rni
+      :rni,
 
       # 估计能量需要量。
       # Estimated Energy Requirement.
@@ -42,7 +52,7 @@ module RrExeNut3
       # 特定群体中 97% 个体满足需要的量，专用于能量。
       #
       # @return [Unit, nil]
-      attr_accessor :eer
+      :eer,
 
       # 适宜摄入量
       # Adequate Intake.
@@ -52,7 +62,7 @@ module RrExeNut3
       # 当研究资料不足而无法统计出 EAR 时，谨慎替代 RNI。
       #
       # @return [Unit, nil]
-      attr_accessor :ai
+      :ai,
 
       # 可耐受最高摄入量。
       # Tolerable Upper Intake Level.
@@ -60,7 +70,7 @@ module RrExeNut3
       # 平均每日可以摄入营养素的最高量。此量对一般人群中的几乎所有个体都不至于造成损害。
       #
       # @return [Unit, nil]
-      attr_accessor :ul
+      :ul,
 
       # 宏量营养素可接受范围下限。
       # Lower Limit of Acceptable Macronutrient Distribution Range.
@@ -70,7 +80,7 @@ module RrExeNut3
       # 专用于脂肪、蛋白质和碳水化合物。
       #
       # @return [Unit, nil]
-      attr_accessor :lamdr
+      :lamdr,
 
       # 宏量营养素可接受范围上限。
       # Upper Limit of Acceptable Macronutrient Distribution Range.
@@ -80,35 +90,76 @@ module RrExeNut3
       # 专用于脂肪、蛋白质和碳水化合物。
       #
       # @return [Unit, nil]
-      attr_accessor :uamdr
+      :uamdr,
 
       # 预防非传染性慢性病的建议摄入量。
       # Proposed Intake for Preventing Non-communicable Chronic Diseases.
       #
       # @return [Unit, nil]
-      attr_accessor :pi
+      :pi,
 
       # 特定建议值。
       # Specific Proposed Level.
       #
       #  @return [Unit, nil]
-      attr_accessor :spl
+      :spl,
 
-      def initialize(ear: nil, rni: nil, eer: nil, ai: nil, ul: nil, lamdr: nil, uamdr: nil, pi: nil, spl: nil) # rubocop:disable Metrics/ParameterLists, Naming/MethodParameterName
-        @ear = ear
-        @rni = rni
-        @eer = eer
-        @ai = ai
-        @ul = ul
-        @lamdr = lamdr
-        @uamdr = uamdr
-        @pi = pi
-        @spl = spl
-      end
-
+      keyword_init: true
+    ) do
+      ##
+      # 仅当所有字段都为 +nil+ 时返回 +true+。
+      # @return [Boolean]
       def empty?
-        instance_variables.empty? || instance_variables.reduce { |memo, obj| memo && obj.nil? }
+        members.empty? || members.reduce { |memo, member| memo && self[member].nil? }
       end
-    end
+
+      ##
+      # 是否含有 <tt>EER</tt>。
+      def contains_eer?
+        !eer.nil?
+      end
+
+      ##
+      # 是否含有 <tt>LAMDR</tt>、<tt>AI</tt>（百分比）、<tt>UAMDR</tt> 中的一项或几项。
+      def contains_lamdr_aipct_uamdr?
+        !lamdr.nil? || ai&.kind == :unitless || !uamdr.nil?
+      end
+
+      ##
+      # 是否含有 <tt>EAR</tt>、<tt>RNI</tt>、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      def contains_ear_rni_pi_ul?
+        !ear.nil? || !rni.nil? || !pi.nil? || !ul.nil?
+      end
+
+      ##
+      # 是否含有 <tt>AI</tt>（单位量）、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      def contains_aiunit_pi_ul?
+        (!ai.nil? && ai.kind != :unitless) || !pi.nil? || !ul.nil?
+      end
+
+      ##
+      # 是否含有 <tt>SPL</tt>、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      def contains_spl_pi_ul?
+        !spl.nil? || !pi.nil? || !ul.nil?
+      end
+
+      ##
+      # 为某字段生成标签，形如
+      #
+      #   <AI 1.7 L/d>
+      #
+      # @param field [Symbol] 字段
+      # @param force [Boolean] 即使值为空，也生成标签
+      # @return [String, nil]
+      def label(field, force: false)
+        if self[field]
+          "<#{field.to_s.upcase} #{self[field]}>"
+        elsif force && members.include?(field)
+          "<#{field.to_s.upcase} nil>"
+        end
+      end
+    end; end
+
+    # rubocop:enable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Metrics/BlockLength, Style/StructInheritance
   end
 end

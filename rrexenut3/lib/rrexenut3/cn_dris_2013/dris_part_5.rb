@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,14 +11,13 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 宏量矿物质的参考摄入量。
+    # 参考摄入量第五部分：宏量矿物质。
+    # DRIs Part 5: Macro Minerals.
     #
     # 在人体内的含量大于 0.01% 体重的矿物质。
     # 包括钾、钠、钙、镁、硫、磷、氯等，都是人体必需的微量营养素。
-    module MacroMineralDris
+    module DrisPart5
       include Aux
-
-      protected
 
       ##
       # 钙的参考摄入量。
@@ -33,7 +32,7 @@ module RrExeNut3
       # @return [Dri]
       def ca_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('200mg/d'), ul: un('1000mg/d'))
           when 0.5...1
@@ -74,7 +73,7 @@ module RrExeNut3
       # @return [Dri]
       def p_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('100mg/d'))
           when 0.5...1
@@ -111,7 +110,7 @@ module RrExeNut3
       # @return [Dri]
       def mg_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('20mg/d'))
           when 0.5...1
@@ -154,7 +153,7 @@ module RrExeNut3
       # @return [Dri]
       def k_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('350mg/d'))
           when 0.5...1
@@ -187,7 +186,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def na_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('170mg/d'))
         when 0.5...1
@@ -223,7 +222,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def cld_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('260mg/d'))
         when 0.5...1

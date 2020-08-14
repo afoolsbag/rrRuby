@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,13 +11,10 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 能量的参考摄入量。
-    #
-    # 膳食中的蛋白质、脂肪和碳水化合物等营养素在人体代谢中产生的能量。
-    module EnergyDri
+    # 参考摄入量第一部分：能量。
+    # DRIs Part 1: Energy.
+    module DrisPart1
       include Aux
-
-      protected
 
       # 碳水化合物的食物热效应（thermic effect of food），5% ~ 10%
       CHO_TEF = 0.075
@@ -32,6 +29,8 @@ module RrExeNut3
       # 能量的参考摄入量。
       # DRI of Energy.
       #
+      # 膳食中的蛋白质、脂肪和碳水化合物等营养素在人体代谢中产生的能量。
+      #
       #   :'ENER-'
       #
       # @return [Dri]
@@ -43,7 +42,7 @@ module RrExeNut3
         dri
       end
 
-      private
+      protected
 
       ##
       # 基础代谢率。
@@ -52,7 +51,7 @@ module RrExeNut3
       # @return [Unit]
       def bmr
         rv = male? ? un('22.3kcal/kg*d') : un('21.2kcal/kg*d')
-        rv *= 0.95 if @age >= 50
+        rv *= 0.95 if @age.scalar >= 50
         rv
       end
 
@@ -64,7 +63,7 @@ module RrExeNut3
       #
       # @return [Float]
       def pal
-        case @age
+        case @age.scalar
         when 0...3
           1.35
         when 3...6
@@ -94,7 +93,7 @@ module RrExeNut3
               2.2
             end
           rv += 0.3 if @extra_exercise
-          rv -= 0.05 if @age >= 80
+          rv -= 0.05 if @age.scalar >= 80
           rv
         end
       end

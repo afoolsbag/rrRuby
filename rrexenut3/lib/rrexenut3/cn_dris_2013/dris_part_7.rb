@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,15 +11,14 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 脂溶性维生素的参考摄入量。
+    # 参考摄入量第七部分：脂溶性维生素。
+    # DRIs Part 7: Lipid-soluble Vitamins.
     #
     # 溶于有机溶剂而不溶于水的一类维生素，包括维生素 A、维生素 D、维生素 E 及维生素 K。
     # 吸收后与脂蛋白或某些特殊蛋白质结合而运输。
     # 可在体内贮存，排泄缓慢，如果摄入过多，可引起蓄积性中毒。
-    module LipidSolubleVitaminDris
+    module DrisPart7
       include Aux
-
-      protected
 
       ##
       # 维生素 A 的参考摄入量。
@@ -33,9 +32,12 @@ module RrExeNut3
       #   :'VITA-'
       #
       # @return [Dri] 视黄醇活性当量（Retinol Activity Equivalents）
+      #--
+      # rubocop:disable Layout/LineLength
+      #++
       def vita_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('300ug/d'), ul: un('600ug/d'))
           when 0.5...1
@@ -47,11 +49,11 @@ module RrExeNut3
           when 7...11
             Dri.new(ear: un('360ug/d'), rni: un('500ug/d'), ul: un('1500ug/d'))
           when 11...14
-            male? ? Dri.new(ear: un('480ug/d'), rni: un('670ug/d'), ul: un('2100ug/d')) : Dri.new(ear: un('450ug/d'), rni: un('630ug/d'), ul: un('2100ug/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('480ug/d'), rni: un('670ug/d'), ul: un('2100ug/d')) : Dri.new(ear: un('450ug/d'), rni: un('630ug/d'), ul: un('2100ug/d'))
           when 14...18
-            male? ? Dri.new(ear: un('590ug/d'), rni: un('820ug/d'), ul: un('2700ug/d')) : Dri.new(ear: un('450ug/d'), rni: un('630ug/d'), ul: un('2700ug/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('590ug/d'), rni: un('820ug/d'), ul: un('2700ug/d')) : Dri.new(ear: un('450ug/d'), rni: un('630ug/d'), ul: un('2700ug/d'))
           else
-            male? ? Dri.new(ear: un('560ug/d'), rni: un('800ug/d'), ul: un('3000ug/d')) : Dri.new(ear: un('480ug/d'), rni: un('700ug/d'), ul: un('3000ug/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('560ug/d'), rni: un('800ug/d'), ul: un('3000ug/d')) : Dri.new(ear: un('480ug/d'), rni: un('700ug/d'), ul: un('3000ug/d'))
           end
 
         if second_trimester?
@@ -68,6 +70,8 @@ module RrExeNut3
         dri
       end
 
+      # rubocop:enable Layout/LineLength
+
       ##
       # 维生素 D 的参考摄入量。
       # DRI of Vitamin D.
@@ -81,7 +85,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def vitd_dri
-        case @age
+        case @age.scalar
         when 0...1
           Dri.new(ai: un('10ug/d'), ul: un('20ug/d'))
         when 1...4
@@ -109,7 +113,7 @@ module RrExeNut3
       # @return [Dri] α-生育酚当量（Alpha-tocopherol Equivalents）
       def vite_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('3mg/d'))
           when 0.5...1
@@ -145,7 +149,7 @@ module RrExeNut3
       # @return [Dri]
       def vitk_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('2ug/d'))
           when 0.5...1

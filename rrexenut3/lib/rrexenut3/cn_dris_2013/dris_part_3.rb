@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,11 +11,10 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 脂质的参考摄入量。
-    module LipidDris
+    # 参考摄入量第三部分：脂质。
+    # DRIs Part 3: Lipids.
+    module DrisPart3
       include Aux
-
-      protected
 
       ##
       # 总脂质的参考摄入量。
@@ -25,7 +24,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def fat_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('48%'))
         when 0.5...1
@@ -47,13 +46,13 @@ module RrExeNut3
       #
       # @return [Dri]
       def sfa_dri
-        case @age
+        case @age.scalar
         when 0...4
           Dri.new
         when 4...18
-          Dri.new(lamdr: un('0%'), uamdr: un('8%'))
+          Dri.new(uamdr: un('8%'))
         else
-          Dri.new(lamdr: un('0%'), uamdr: un('10%'))
+          Dri.new(uamdr: un('10%'))
         end
       end
 
@@ -79,7 +78,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def n6pufa_dri
-        case @age
+        case @age.scalar
         when 0...18
           Dri.new
         else
@@ -95,7 +94,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def la_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('7.3%'))
         when 0.5...1
@@ -113,7 +112,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def ara_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('150mg/d'))
         else
@@ -132,7 +131,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def n3pufa_dri
-        case @age
+        case @age.scalar
         when 0...18
           Dri.new
         else
@@ -148,7 +147,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def alac_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('0.87%'))
         when 0.5...1
@@ -183,7 +182,7 @@ module RrExeNut3
       def dha_dri
         if pregnancy_or_lactation?
           Dri.new(ai: un('200mg/d'))
-        elsif @age.between?(0, 4)
+        elsif @age.scalar.between?(0, 4)
           Dri.new(ai: un('100mg/d'))
         else
           Dri.new

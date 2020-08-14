@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,11 +11,10 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 蛋白质（和氨基酸）的参考摄入量。
-    module ProteinDris
+    # 参考摄入量第二部分：蛋白质和氨基酸。
+    # DRIs Part 2: Proteins and Amino Acids.
+    module DrisPart2
       include Aux
-
-      protected
 
       ##
       # 蛋白质的参考摄入量。
@@ -28,7 +27,7 @@ module RrExeNut3
       # @return [Dri]
       def prot_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('9g/d'))
           when 0.5...1
@@ -64,7 +63,7 @@ module RrExeNut3
           dri.rni += un('25g/d')
         end
 
-        dri.ul = 2 * dir.rni
+        dri.ul = 2 * dri.rni
 
         dri
       end

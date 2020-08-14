@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,16 +11,15 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 痕量矿物质的参考摄入量。
+    # 参考摄入量第六部分：痕量矿物质。
+    # DRIs Part 6: Trace Minerals.
     #
     # 在人体内的含量小于 0.01% 体重的矿物质。分为三类：
     # 第一类为人体必需的微量元素，有铁、碘、锌、硒、铜、钼、铬、钴 8 种；
     # 第二类为人体可能必需的微量元素，有锰、硅、镍、硼、钒 5 种；
     # 第三类为具有潜在毒性，但在低剂量时，对人体可能是有益的微量元素，包括氟、铅、镉、汞、砷、铝、锂、锡 8 种。
-    module TraceMineralDris
+    module DrisPart6
       include Aux
-
-      protected
 
       # 人体必须的微量元素
 
@@ -35,9 +34,12 @@ module RrExeNut3
       #   :FE
       #
       # @return [Dri]
+      #--
+      # rubocop:disable Layout/LineLength
+      #++
       def fe_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.3mg/d'))
           when 0.5...1
@@ -49,11 +51,11 @@ module RrExeNut3
           when 7...11
             Dri.new(ear: un('10mg/d'), rni: un('13mg/d'), ul: un('35mg/d'))
           when 11...14
-            male? ? Dri.new(ear: un('11mg/d'), rni: un('15mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('14mg/d'), rni: un('18mg/d'), ul: un('40mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('11mg/d'), rni: un('15mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('14mg/d'), rni: un('18mg/d'), ul: un('40mg/d'))
           when 14...18
-            male? ? Dri.new(ear: un('12mg/d'), rni: un('16mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('14mg/d'), rni: un('18mg/d'), ul: un('40mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('12mg/d'), rni: un('16mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('14mg/d'), rni: un('18mg/d'), ul: un('40mg/d'))
           when 18...50
-            male? ? Dri.new(ear: un('9mg/d'), rni: un('12mg/d'), ul: un('42mg/d')) : Dri.new(ear: un('15mg/d'), rni: un('20mg/d'), ul: un('42mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('9mg/d'), rni: un('12mg/d'), ul: un('42mg/d')) : Dri.new(ear: un('15mg/d'), rni: un('20mg/d'), ul: un('42mg/d'))
           else
             Dri.new(ear: un('9mg/d'), rni: un('12mg/d'), ul: un('42mg/d'))
           end
@@ -72,6 +74,8 @@ module RrExeNut3
         dri
       end
 
+      # rubocop:enable Layout/LineLength
+
       ##
       # 碘的参考摄入量。
       # DRI of Iodine.
@@ -85,7 +89,7 @@ module RrExeNut3
       # @return [Dri]
       def id_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('85ug/d'))
           when 0.5...1
@@ -125,9 +129,12 @@ module RrExeNut3
       #   :ZN
       #
       # @return [Dri]
+      #--
+      # rubocop:disable Layout/LineLength
+      #++
       def zn_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('2.0mg/d'))
           when 0.5...1
@@ -139,11 +146,11 @@ module RrExeNut3
           when 7...11
             Dri.new(ear: un('5.9mg/d'), rni: un('7.0mg/d'), ul: un('19mg/d'))
           when 11...14
-            male? ? Dri.new(ear: un('8.2mg/d'), rni: un('10.0mg/d'), ul: un('28mg/d')) : Dri.new(ear: un('7.6mg/d'), rni: un('9.0mg/d'), ul: un('28mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('8.2mg/d'), rni: un('10.0mg/d'), ul: un('28mg/d')) : Dri.new(ear: un('7.6mg/d'), rni: un('9.0mg/d'), ul: un('28mg/d'))
           when 14...18
-            male? ? Dri.new(ear: un('9.7mg/d'), rni: un('11.5mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('6.9mg/d'), rni: un('8.5mg/d'), ul: un('35mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('9.7mg/d'), rni: un('11.5mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('6.9mg/d'), rni: un('8.5mg/d'), ul: un('35mg/d'))
           else
-            male? ? Dri.new(ear: un('10.4mg/d'), rni: un('12.5mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('6.1mg/d'), rni: un('7.5mg/d'), ul: un('40mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('10.4mg/d'), rni: un('12.5mg/d'), ul: un('40mg/d')) : Dri.new(ear: un('6.1mg/d'), rni: un('7.5mg/d'), ul: un('40mg/d'))
           end
 
         if pregnancy?
@@ -157,6 +164,8 @@ module RrExeNut3
         dri
       end
 
+      # rubocop:enable Layout/LineLength
+
       ##
       # 硒的参考摄入量。
       # DRI of Selenium.
@@ -169,7 +178,7 @@ module RrExeNut3
       # @return [Dri]
       def se_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('15ug/d'), ul: un('55ug/d'))
           when 0.5...1
@@ -211,7 +220,7 @@ module RrExeNut3
       # @return [Dri]
       def cu_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...1
             Dri.new(ai: un('0.3mg/d'))
           when 1...4
@@ -251,7 +260,7 @@ module RrExeNut3
       # @return [Dri]
       def mo_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('2ug/d'))
           when 0.5...1
@@ -293,7 +302,7 @@ module RrExeNut3
       # @return [Dri]
       def cr_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.2ug/d'))
           when 0.5...1
@@ -338,7 +347,7 @@ module RrExeNut3
       # @return [Dri]
       def mn_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.01mg/d'))
           when 0.5...1
@@ -407,7 +416,7 @@ module RrExeNut3
       #
       # @return [Dri]
       def fd_dri
-        case @age
+        case @age.scalar
         when 0...0.5
           Dri.new(ai: un('0.01mg/d'))
         when 0.5...1

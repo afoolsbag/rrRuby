@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,11 +11,10 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 其他膳食成分的参考摄入量。
-    module OtherDris
+    # 参考摄入量第九部分：其他膳食成分。
+    # DRIs Part 9: Non-nutrient Diet Components.
+    module DrisPart9
       include Aux
-
-      protected
 
       # 饮水和膳食纤维
 
@@ -28,22 +27,22 @@ module RrExeNut3
       # @return [Dri]
       def water_dri
         dri =
-          case @age
+          case @age.scalar
           when 1...4
             Dri.new
           when 4...7
-            Dri.new(ai: un('0.8kg/d'))
+            Dri.new(ai: un('0.8L/d'))
           when 7...11
-            Dri.new(ai: un('1.0kg/d'))
+            Dri.new(ai: un('1.0L/d'))
           when 11...14
-            male? ? Dri.new(ai: un('1.3kg/d')) : Dri.new(ai: un('1.1kg/d'))
+            male? ? Dri.new(ai: un('1.3L/d')) : Dri.new(ai: un('1.1L/d'))
           when 14...18
-            male? ? Dri.new(ai: un('1.4kg/d')) : Dri.new(ai: un('1.2kg/d'))
+            male? ? Dri.new(ai: un('1.4L/d')) : Dri.new(ai: un('1.2L/d'))
           else
-            male? ? Dri.new(ai: un('1.7kg/d')) : Dri.new(ai: un('1.5kg/d'))
+            male? ? Dri.new(ai: un('1.7L/d')) : Dri.new(ai: un('1.5L/d'))
           end
-        dri.ai += un('0.2kg/d') if pregnancy?
-        dri.ai += un('0.6kg/d') if lactation?
+        dri.ai += un('0.2L/d') if pregnancy?
+        dri.ai += un('0.6L/d') if lactation?
         dri
       end
 

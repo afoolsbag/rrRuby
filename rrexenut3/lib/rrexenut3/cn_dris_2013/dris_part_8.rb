@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-13
 # Unlicense
 
 require 'rrexenut3/cn_dris_2013/aux_'
@@ -11,14 +11,13 @@ require 'rrexenut3/cn_dris_2013/dri'
 module RrExeNut3
   module CnDris2013
     ##
-    # 水溶性维生素的参考摄入量。
+    # 参考摄入量第八部分：水溶性维生素。
+    # DRIs Part 8: Water-soluble Vitamins.
     #
     # 能在水中溶解的一类维生素，
     # 包括 B 族维生素（维生素 B-1、维生素 B-2、维生素 B-6、维生素 B-12、泛酸、叶酸、烟酸、胆碱、生物素）和维生素 C。
-    module WaterSolubleVitaminDris
+    module DrisPart8
       include Aux
-
-      protected
 
       ##
       # 硫胺素的参考摄入量。
@@ -34,7 +33,7 @@ module RrExeNut3
       # @return [Dri]
       def thia_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.1mg/d'))
           when 0.5...1
@@ -78,7 +77,7 @@ module RrExeNut3
       # @return [Dri]
       def ribf_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.4mg/d'))
           when 0.5...1
@@ -122,9 +121,12 @@ module RrExeNut3
       #   :NIA
       #
       # @return [Dri] 烟酸当量（Niacin Equivalents）
+      #--
+      # rubocop:disable Layout/LineLength
+      #++
       def nia_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('2mg/d'))
           when 0.5...1
@@ -132,21 +134,21 @@ module RrExeNut3
           when 1...4
             Dri.new(ear: un('5mg/d'), rni: un('6mg/d'), ul: un('10mg/d'))
           when 4...7
-            male? ? Dri.new(ear: un('7mg/d'), rni: un('8mg/d'), ul: un('15mg/d')) : Dri.new(ear: un('6mg/d'), rni: un('8mg/d'), ul: un('15mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('7mg/d'), rni: un('8mg/d'), ul: un('15mg/d')) : Dri.new(ear: un('6mg/d'), rni: un('8mg/d'), ul: un('15mg/d'))
           when 7...11
-            male? ? Dri.new(ear: un('9mg/d'), rni: un('11mg/d'), ul: un('20mg/d')) : Dri.new(ear: un('8mg/d'), rni: un('10mg/d'), ul: un('20mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('9mg/d'), rni: un('11mg/d'), ul: un('20mg/d')) : Dri.new(ear: un('8mg/d'), rni: un('10mg/d'), ul: un('20mg/d'))
           when 11...14
-            male? ? Dri.new(ear: un('11mg/d'), rni: un('14mg/d'), ul: un('25mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('25mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('11mg/d'), rni: un('14mg/d'), ul: un('25mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('25mg/d'))
           when 14...18
-            male? ? Dri.new(ear: un('14mg/d'), rni: un('16mg/d'), ul: un('30mg/d')) : Dri.new(ear: un('11mg/d'), rni: un('13mg/d'), ul: un('30mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('14mg/d'), rni: un('16mg/d'), ul: un('30mg/d')) : Dri.new(ear: un('11mg/d'), rni: un('13mg/d'), ul: un('30mg/d'))
           when 18...50
-            male? ? Dri.new(ear: un('12mg/d'), rni: un('15mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('35mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('12mg/d'), rni: un('15mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('35mg/d'))
           when 50...65
-            male? ? Dri.new(ear: un('12mg/d'), rni: un('14mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('35mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('12mg/d'), rni: un('14mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('10mg/d'), rni: un('12mg/d'), ul: un('35mg/d'))
           when 65...80
-            male? ? Dri.new(ear: un('11mg/d'), rni: un('14mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('9mg/d'), rni: un('11mg/d'), ul: un('35mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('11mg/d'), rni: un('14mg/d'), ul: un('35mg/d')) : Dri.new(ear: un('9mg/d'), rni: un('11mg/d'), ul: un('35mg/d'))
           else
-            male? ? Dri.new(ear: un('11mg/d'), rni: un('13mg/d'), ul: un('30mg/d')) : Dri.new(ear: un('8mg/d'), rni: un('10mg/d'), ul: un('30mg/d')) # rubocop:disable Layout/LineLength
+            male? ? Dri.new(ear: un('11mg/d'), rni: un('13mg/d'), ul: un('30mg/d')) : Dri.new(ear: un('8mg/d'), rni: un('10mg/d'), ul: un('30mg/d'))
           end
 
         if lactation?
@@ -156,6 +158,8 @@ module RrExeNut3
 
         dri
       end
+
+      # rubocop:enable Layout/LineLength
 
       ##
       # 泛酸的参考摄入量。
@@ -171,7 +175,7 @@ module RrExeNut3
       # @return [Dri]
       def pantac_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('1.7mg/d'))
           when 0.5...1
@@ -206,7 +210,7 @@ module RrExeNut3
       # @return [Dri]
       def vitb6_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.2mg/d'))
           when 0.5...1
@@ -251,7 +255,7 @@ module RrExeNut3
       # @return [Dri]
       def biot_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('5ug/d'))
           when 0.5...1
@@ -286,7 +290,7 @@ module RrExeNut3
       # @return [Dri]
       def fol_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('65ug/d'))
           when 0.5...1
@@ -328,7 +332,7 @@ module RrExeNut3
       # @return [Dri]
       def vitb12_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('0.3ug/d'))
           when 0.5...1
@@ -369,7 +373,7 @@ module RrExeNut3
       # @return [Dri]
       def choln_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('120mg/d'))
           when 0.5...1
@@ -405,7 +409,7 @@ module RrExeNut3
       # @return [Dri]
       def vitc_dri
         dri =
-          case @age
+          case @age.scalar
           when 0...0.5
             Dri.new(ai: un('40mg/d'))
           when 0.5...1
