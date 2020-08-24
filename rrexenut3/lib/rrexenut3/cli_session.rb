@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-03 – 2020-08-04
+# 2020-08-03 – 2020-08-24
 # Unlicense
 
 require 'colorized_string'
@@ -11,7 +11,8 @@ require 'sqlite3'
 module RrExeNut3
   ##
   # 命令行接口会话。
-  class CommandLineInterfaceSession
+  # Command Line Interface Session
+  class CliSession
     attr_reader :focus_date
 
     def initialize
