@@ -13,6 +13,4 @@ module RrExeNut3
   # International Food Records.
   module Ifrs
   end
-
-  class Ifri < Ifrs::Identifier; end
 end

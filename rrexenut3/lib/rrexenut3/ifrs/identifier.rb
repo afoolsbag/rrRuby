@@ -43,9 +43,11 @@ module RrExeNut3
       # @param string [String]
       def initialize(string)
         if string[1..3] == 'XX.'
-          @country, @publication, *@code = string.split('.')
+          @country, @publication, *rest = string.split('.')
+          @code = rest.empty? ? nil : rest.join('.')
         else
-          @country, @organization, @publication, *@code = string.split('.')
+          @country, @organization, @publication, *rest = string.split('.')
+          @code = rest.empty? ? nil : rest.join('.')
         end
       end
 
@@ -55,8 +57,8 @@ module RrExeNut3
       end
 
       # @return [Identifier]
-      def try_strip_as_country
-        Identifier.new(@country, nil, nil, nil)
+      def try_as_country
+        Identifier.new(@country)
       end
 
       # @return [Boolean]
@@ -65,8 +67,8 @@ module RrExeNut3
       end
 
       # @return [Identifier]
-      def try_strip_as_organization
-        Identifier.new(@country, @organization, nil, nil)
+      def try_as_organization
+        Identifier.new("#{@country}.#{@organization}")
       end
 
       # @return [Boolean]
@@ -79,8 +81,12 @@ module RrExeNut3
       end
 
       # @return [Identifier]
-      def try_strip_as_publication
-        Identifier.new(@country, @organization, @publication, nil)
+      def try_as_publication
+        if @country == 'XX'
+          Identifier.new("#{@country}.#{@publication}")
+        else
+          Identifier.new("#{@country}.#{@organization}.#{@publication}")
+        end
       end
 
       # @return [Integer]
@@ -90,7 +96,11 @@ module RrExeNut3
 
       # @return [String]
       def to_s
-        "#{@country}.#{@organization}.#{@publication}.#{@code}"
+        if @country == 'XX'
+          "#{@country}.#{@publication}.#{@code}"
+        else
+          "#{@country}.#{@organization}.#{@publication}.#{@code}"
+        end
       end
 
       # @return [Symbol]

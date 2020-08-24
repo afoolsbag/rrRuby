@@ -34,7 +34,7 @@ module RrExeNut3
         raise "标识符 #{ifri} 应标识出版物。" unless ifri.as_publication?
         raise "标识符 #{ifri} 已绑定本地数据库，请勿重复绑定。" if @local_databases_cache.include?(ifri)
 
-        @local_databases_cache[ifri] = SQLite3::Database.new(path, { readonly: true })
+        @local_databases_cache[ifri] = SQLite3::Database.new(path, {readonly: true})
       end
 
       ##
@@ -56,8 +56,8 @@ module RrExeNut3
       def query_from_local_database(ifri)
         return @ifrs_cache[ifri] if @ifrs_cache.include?(ifri)
 
-        db = @local_databases_cache[ifri.publication_code]
-        raise "本地数据库 #{ifri.publication_code} 未找到。" if db.nil?
+        db = @local_databases_cache[ifri.try_as_publication]
+        raise "本地数据库 #{ifri.try_as_publication} 未找到。" if db.nil?
 
         results = db.execute(<<~SQL, ifri)
           SELECT *
@@ -73,9 +73,9 @@ module RrExeNut3
             Nutrients[column] = row[column]
           end
           nut
+        else
+          nil
         end
-
-        nil
       end
 
       protected
