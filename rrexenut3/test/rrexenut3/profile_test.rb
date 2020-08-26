@@ -31,6 +31,6 @@ class ProfileTest < Minitest::Test
   def test_activity
     profile = RrExeNut3::Profile.new('test.rrexenut3.profile')
     profile.insert_activity('TEST.ifri', '100g')
-    p profile.select_activities
+    _ = profile.select_activities
   end
 end

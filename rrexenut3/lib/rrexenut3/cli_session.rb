@@ -2,10 +2,10 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-03 – 2020-08-24
+# 2020-08-03 – 2020-08-26
 # Unlicense
 
-require 'colorized_string'
+require 'colorize'
 require 'sqlite3'
 
 module RrExeNut3
@@ -94,7 +94,7 @@ module RrExeNut3
     #
     # @return [ColorizedString]
     def prompt_text
-      focus_date_suffix = RrExeNut3::CommandLineInterfaceSession.relative_date_name(@focus_date) || ''
+      focus_date_suffix = relative_date_name(@focus_date) || ''
       focus_date_suffix = "(#{focus_date_suffix})" unless focus_date_suffix.empty?
       ColorizedString.new(
         "#{ColorizedString[@profile_name].colorize(:green)} " \
@@ -163,7 +163,7 @@ module RrExeNut3
     ##
     # 加载档案。
     #
-    # @param name [String] 档案名
+    # @param name [String, #to_s] 档案名
     # @return [void]
     def load_profile(name)
       path = File.absolute_path("#{name}.rrexenut3.profile")

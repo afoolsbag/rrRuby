@@ -12,7 +12,7 @@ require 'colorized_string'
 require 'date'
 require 'readline'
 
-require 'rrexenut3/command_line_interface_session'
+require 'rrexenut3/cli_session'
 
 ##
 # 命令模块。
@@ -235,7 +235,7 @@ if __FILE__ == $PROGRAM_NAME
   Readline.completion_append_character = ''
 
   # 档案相关
-  sess = RrExeNut3::CommandLineInterfaceSession.new
+  sess = RrExeNut3::CliSession.new
 
   # 自动加载工作目录下，找到的首个档案
   Dir.new('.').each do |filename|

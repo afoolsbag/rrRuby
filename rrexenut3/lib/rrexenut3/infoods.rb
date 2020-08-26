@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-28 – 2020-08-25
+# 2020-07-28 – 2020-08-26
 # Unlicense
 
 require 'rrexenut3/infoods/tagname'
@@ -74,6 +74,6 @@ module RrExeNut3
     end
 
     # @return [Hash<Symbol=>RrExeNut3::Infoods::Tagname]
-    TAGNAMES = RrExeNut3::Infoods.load_tagnames_established.freeze
+    TAGNAMES = load_tagnames_established.freeze
   end
 end
