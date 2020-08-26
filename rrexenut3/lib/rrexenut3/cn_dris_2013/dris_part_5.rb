@@ -2,10 +2,10 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-13
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 require 'rrexenut3/cn_dris_2013/dri'
 
 module RrExeNut3
@@ -17,7 +17,7 @@ module RrExeNut3
     # 在人体内的含量大于 0.01% 体重的矿物质。
     # 包括钾、钠、钙、镁、硫、磷、氯等，都是人体必需的微量营养素。
     module DrisPart5
-      include Aux
+      include DrisAux
 
       ##
       # 钙的参考摄入量。

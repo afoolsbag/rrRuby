@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-28 – 2020-08-06
+# 2020-07-28 – 2020-08-25
 # Unlicense
 
 require 'rrexenut3/infoods/tagname'
@@ -11,7 +11,8 @@ require 'rrexenut3/infoods/xls_parser'
 
 module RrExeNut3
   ##
-  # 国际食品数据系统网络（INFOODS）。
+  # 国际食品数据系统网络。
+  # International Network of Food Data Systems.
   module Infoods
     ##
     # 将信息插入标签集。

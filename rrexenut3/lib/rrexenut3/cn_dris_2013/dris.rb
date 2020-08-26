@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-07 – 2020-08-13
+# 2020-08-07 – 2020-08-26
 # Unlicense
 
 require 'ruby-units'
@@ -47,10 +47,10 @@ module RrExeNut3
       # +extra_exercise+ 的评判标准：
       # 额外有明显的体育运动量或重体力休闲活动，每周 4 ~ 5 次，每次 30 ~ 60 分钟。
       #
-      # @param sex [Symbol] 生理性别、孕期或哺乳期
-      # @param age [Unit] 年龄
-      # @param weight [Unit] 体重
-      # @param lifestyle [Symbol] 生活方式
+      # @param sex [Symbol, #to_sym] 生理性别、孕期或哺乳期
+      # @param age [Unit, #to_unit] 年龄
+      # @param weight [Unit, #to_unit] 体重
+      # @param lifestyle [Symbol, #to_sym] 生活方式
       # @param extra_exercise [Boolean] 额外运动
       # @return [void]
       #--
@@ -58,11 +58,16 @@ module RrExeNut3
       #++
       def initialize(sex:, age:, weight:,
                      lifestyle: :sedentary, extra_exercise: false)
-        raise ArgumentError, "Unexpected sex value: #{sex}" unless SEX_VALID_VALUES.include?(sex)
-        raise ArgumentError, "Unexpected age value: #{age}" unless age.is_a?(Unit)
-        raise ArgumentError, "Unexpected weight value: #{weight}" unless weight.is_a?(Unit)
-        raise ArgumentError, "Unexpected lifestyle value: #{lifestyle}" unless LIFESTYLE_VALID_VALUES.include?(lifestyle)
-        raise ArgumentError, "Unexpected extra_exercise value: #{extra_exercise}" unless BOOLEAN_VALID_VALUES.include?(extra_exercise)
+        sex = sex.to_sym unless sex.is_a?(Symbol)
+        age = age.to_unit unless age.is_a?(Unit)
+        weight = weight.to_unit unless weight.is_a?(Unit)
+        lifestyle = lifestyle.to_sym unless lifestyle.is_a?(Symbol)
+
+        raise ArgumentError, "Unexpected sex argument: #{sex}" unless SEX_VALID_VALUES.include?(sex)
+        raise ArgumentError, "Unexpected age argument: #{age}" unless age.kind == :time
+        raise ArgumentError, "Unexpected weight argument: #{weight}" unless weight.kind == :mass
+        raise ArgumentError, "Unexpected lifestyle argument: #{lifestyle}" unless LIFESTYLE_VALID_VALUES.include?(lifestyle)
+        raise ArgumentError, "Unexpected extra_exercise argument: #{extra_exercise}" unless BOOLEAN_VALID_VALUES.include?(extra_exercise)
 
         @sex = sex
         @age = age.convert_to('yr')
@@ -147,8 +152,10 @@ module RrExeNut3
       TAGNAME_DRINAME_MAPPING = [
         'Energy',
         %i[ENER- ener_dri],
+        %i[ENERC ener_dri],
         'Proteins and Amino Acids',
         %i[PRO- prot_dri],
+        %i[PROCNT prot_dri],
         'Lipids',
         %i[FAT fat_dri],
         %i[FASAT sfa_dri],
@@ -161,6 +168,7 @@ module RrExeNut3
         %i[F22D6N3 dha_dri],
         'Carbohydrates',
         %i[CHO- cho_dri],
+        %i[CHOCDF cho_dri],
         %i[SUGAR sugar_dri],
         'Macro Minerals',
         %i[CA ca_dri],
@@ -181,8 +189,10 @@ module RrExeNut3
         %i[FD fd_dri],
         'Lipid-soluble Vitamins',
         %i[VITA- vita_dri],
+        %i[VITA vita_dri],
         %i[VITD- vitd_dri],
         %i[VITE- vite_dri],
+        %i[VITE vite_dri],
         %i[VITK vitk_dri],
         'Water-soluble Vitamins',
         %i[THIA thia_dri],
@@ -198,6 +208,7 @@ module RrExeNut3
         'Non-nutrient Diet Components',
         %i[WATER water_dri],
         %i[FIB- fib_dri],
+        %i[FIBTG fib_dri],
         %i[LYCPN lycpn_dri],
         %i[LUTN lutn_dri],
         %i[PHYSTR phystr_dri]

@@ -5,8 +5,8 @@
 # 2020-08-12 – 2020-08-13
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
@@ -14,7 +14,7 @@ module RrExeNut3
     # 参考摄入量第二部分：蛋白质和氨基酸。
     # DRIs Part 2: Proteins and Amino Acids.
     module DrisPart2
-      include Aux
+      include DrisAux
 
       ##
       # 蛋白质的参考摄入量。

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-07 – 2020-08-14
+# 2020-08-07 – 2020-08-26
 # Unlicense
 
 require 'ruby-units'
@@ -15,16 +15,16 @@ module RrExeNut3
   # 中国居民膳食营养素参考摄入量（2013版）。
   # Chinese Dietary Reference Intakes 2013.
   module CnDris2013
-    ONE_DAY = Unit.new('1d').freeze
-
     ##
     # 依据参考摄入量，对某段时间内营养素的摄入、消耗进行总结，生成总结报告。
     #
     # @param intakes [Nutrients] 某段时间内的摄入量。
     # @param dris [Dris] 参考摄入量。
-    # @param duration [Unit] 时间段。
+    # @param duration [Unit, #to_unit] 时间段。
     # @return [String] 报告。
-    def self.summary(intakes, dris, duration: ONE_DAY)
+    def self.summary(intakes, dris, duration: '1day')
+      duration = duration.to_unit unless duration.is_a?(Unit)
+
       rv = ''
       Dris::TAGNAME_DRINAME_MAPPING.each do |elem|
         if elem.instance_of?(String)

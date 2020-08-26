@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-13
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
@@ -17,7 +17,7 @@ module RrExeNut3
     # 能在水中溶解的一类维生素，
     # 包括 B 族维生素（维生素 B-1、维生素 B-2、维生素 B-6、维生素 B-12、泛酸、叶酸、烟酸、胆碱、生物素）和维生素 C。
     module DrisPart8
-      include Aux
+      include DrisAux
 
       ##
       # 硫胺素的参考摄入量。

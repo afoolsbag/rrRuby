@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-13
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
@@ -18,7 +18,7 @@ module RrExeNut3
     # 吸收后与脂蛋白或某些特殊蛋白质结合而运输。
     # 可在体内贮存，排泄缓慢，如果摄入过多，可引起蓄积性中毒。
     module DrisPart7
-      include Aux
+      include DrisAux
 
       ##
       # 维生素 A 的参考摄入量。

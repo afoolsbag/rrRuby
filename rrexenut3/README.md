@@ -17,8 +17,11 @@
     *   中国居民膳食营养素参考摄入量（2013版）
 *   [*中国疾病预防控制中心*](http://www.chinacdc.cn/)
     *   [营养与健康所](http://www.chinanutri.cn/)
+        *   [*食品营养成分查询平台*](https://fq.chinafcd.org/)
         *   另，[*薄荷网*](https://www.boohee.com/food/)
         *   另，[*唤醒食物*](http://www.foodwake.com/)
+*   [*中国商品信息服务平台*](http://www.gds.org.cn/)
+    *   [*预包装食品营养标签数据查询系统*](https://nlc.chinafcd.org/)
 *   [*FoodData Central*](https://fdc.nal.usda.gov/)
 
 ## 许可

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-14 – 2020-08-14
+# 2020-08-14 – 2020-08-26
 # Unlicense
 
 require 'sqlite3'
@@ -16,28 +16,224 @@ module RrExeNut3
     ##
     # 初始化。
     #
-    # TODO:
+    # @param path [String]
+    # @param mode [Symbol]
     def initialize(path, mode: :open_or_new)
-      raise NotImplementedError
+      raise ArgumentError, "Unexpected path argument: #{path}" unless path.is_a?(String)
+      raise ArgumentError, "Unexpected mode argument: #{mode}" unless MODE_VALID_VALUES.include?(mode)
 
-      # return [SQLite::Database]
-      @db = SQLite3::Database.new(path)
+      if File.exist?(path)
+        raise "The file #{path} already exists." unless %i[open open_or_new].include?(mode)
+
+        @db = SQLite3::Database.new(path)
+      else
+        raise "The file #{path} not exists." unless %i[new open_or_new].include?(mode)
+
+        @db = SQLite3::Database.new(path)
+        initialize_database
+      end
     end
 
     ##
     # 获取生日。
     #
-    # @return [Date]
+    # @return [Date, nil]
     def birthday
-      raise NotImplementedError
+      rows = @db.execute(<<~SQL)
+        SELECT birthday
+          FROM birthday;
+      SQL
+      raise 'Database corruption: multiple birthday rows.' if rows.length > 1
+
+      birthday, * = rows[0]
+
+      Date.iso8601(birthday) if birthday
     end
 
     ##
     # 设定生日。
     #
-    # @param date [Date] 日期
+    # @param date [Date, String, #to_date] 日期
+    # @return [void]
     def birthday=(date)
-      raise NotImplementedError
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      rows = @db.execute(<<~SQL)
+        SELECT COUNT(*)
+          FROM birthday;
+      SQL
+      cnt, * = rows[0]
+
+      if cnt.zero?
+        @db.execute(<<~SQL, [date.iso8601])
+          INSERT INTO birthday (birthday)
+          VALUES (?);
+        SQL
+      elsif cnt == 1
+        @db.execute(<<~SQL, [date.iso8601])
+          UPDATE birthday
+             SET birthday = ? 
+           WHERE birthday = 
+                 (SELECT birthday
+                    FROM birthday
+                   LIMIT 1);
+        SQL
+      else
+        raise 'Database corruption: multiple birthday rows.'
+      end
+    end
+
+    ##
+    # 查询性别、孕期或哺乳期。
+    #
+    # @param date [Date, String, #to_date] 日期
+    # @return [Symbol, nil]
+    def select_sex(date)
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      rows = @db.execute(<<~SQL, [date.iso8601])
+        SELECT sex
+          FROM sex
+         WHERE date <= date(?)
+         ORDER BY date DESC
+         LIMIT 1;
+      SQL
+      sex, * = rows[0]
+
+      sex&.to_sym
+    end
+
+    # @return [Symbol, nil]
+    def sex
+      select_sex(Date.today)
+    end
+
+    ##
+    # 插入性别、孕期或哺乳期。
+    #
+    # @param sex [Symbol, #to_sym]
+    # @param date [Date, String, #to_date]
+    # @return [void]
+    def insert_sex(sex, date = Date.today)
+      sex = sex.to_sym unless sex.is_a?(Symbol)
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      @db.execute(<<~SQL, [date.iso8601, sex.to_s])
+        INSERT OR REPLACE INTO sex (date, sex)
+        VALUES (?, ?);
+      SQL
+      nil
+    end
+
+    # @param sex [Symbol, #to_sym]
+    # @return [void]
+    def sex=(sex)
+      insert_sex(sex, Date.today)
+    end
+
+    ##
+    # 查询体重。
+    #
+    # @param date [Date, String, #to_date]
+    # @return [Unit, nil]
+    def select_weight(date)
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      rows = @db.execute(<<~SQL, [date.iso8601])
+        SELECT weight
+          FROM weight
+         WHERE date <= date(?)
+         ORDER BY date DESC
+         LIMIT 1;
+      SQL
+      weight, * = rows[0]
+
+      weight&.to_unit
+    end
+
+    # @return [Unit, nil]
+    def weight
+      select_weight(Date.today)
+    end
+
+    ##
+    # 插入体重。
+    #
+    # @param weight [Unit, #to_unit]
+    # @param date [Date, String, #to_date]
+    # @return [void]
+    def insert_weight(weight, date = Date.today)
+      weight = weight.to_unit unless weight.is_a?(Unit)
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      @db.execute(<<~SQL, [date.iso8601, weight.to_s])
+        INSERT OR REPLACE INTO weight (date, weight)
+        VALUES (?, ?);
+      SQL
+    end
+
+    # @param weight [Unit, #to_unit]
+    # @return [void]
+    def weight=(weight)
+      insert_weight(weight, Date.today)
+    end
+
+    # rubocop:disable Style/StructInheritance
+    class ActivityRow < Struct.new(
+      # @return [DateTime]
+      :time,
+      # @return [String, nil]
+      :description,
+      # @return [String]
+      :ifri,
+      # @return [Unit]
+      :amount
+    ); end
+
+    # rubocop:enable Style/StructInheritance
+
+    # @param date [Date, String, #to_date]
+    # @return [Array<ActivityRow>]
+    def select_activities(date = Date.today)
+      date = Date.iso8601(date) if date.is_a?(String)
+      date = date.to_date unless date.is_a?(Date)
+
+      rows = @db.execute(<<~SQL, [date.iso8601])
+        SELECT time, description, ifri, amount
+          FROM activities
+         WHERE date(?1) <= time
+           AND time < date(?1, '+1 day')
+      SQL
+
+      rv = []
+      rows.each { |row| rv.append(ActivityRow.new(DateTime.iso8601(row[0]), row[1], row[2], row[3].to_unit)) }
+      rv
+    end
+
+    # @param ifri [String, #to_s]
+    # @param amount [Unit, #to_unit] 质量或体积
+    # @param description [String, #to_s, nil]
+    # @param time [DateTime, String, #to_datetime]
+    # @return [void]
+    def insert_activity(ifri, amount, description = nil, time = DateTime.now)
+      ifri = ifri.to_s unless ifri.is_a?(String)
+      description = description.to_s if description && !description.is_a?(String)
+      amount = amount.to_unit unless amount.is_a?(Unit)
+      time = DateTime.iso8601(time) if time.is_a?(String)
+      time = time.to_datetime unless time.is_a?(DateTime)
+
+      raise ArgumentError, "Unexpected amount argument: #{amount}" unless %i[mass volume].include?(amount.kind)
+
+      @db.execute(<<~SQL, [time.iso8601, description, ifri, amount.to_s])
+        INSERT OR REPLACE INTO activities (time, description, ifri, amount)
+        VALUES (?, ?, ?, ?);
+      SQL
+      nil
     end
 
     private
@@ -47,31 +243,31 @@ module RrExeNut3
     def initialize_database
       @db.execute <<~SQL
         CREATE TABLE birthday (
-          birthday TEXT NOT NULL                 -- ISO 8601 日期，如 '2020-08-14'
+          birthday TEXT NOT NULL  -- ISO 8601 日期，如 '2020-08-14'
         );
       SQL
 
       @db.execute <<~SQL
         CREATE TABLE sex (
-          date     TEXT PRIMARY KEY NOT NULL,    -- ISO 8601 日期，如 '2020-08-14'
-          sex      TEXT             NOT NULL     -- 生理性别、孕期或哺乳期 
+          date TEXT PRIMARY KEY NOT NULL,  -- ISO 8601 日期，如 '2020-08-14'
+          sex  TEXT             NOT NULL   -- 生理性别、孕期或哺乳期 
         );
       SQL
 
       @db.execute <<~SQL
         CREATE TABLE weight (
-          date     TEXT PRIMARY KEY NOT NULL,  -- ISO 8601 日期，如 '2020-08-14'
-          weight   TEXT             NOT NULL   -- 带单位的量，如 '65kg' 等
+          date   TEXT PRIMARY KEY NOT NULL,  -- ISO 8601 日期，如 '2020-08-14'
+          weight TEXT             NOT NULL   -- 带单位的量，如 '65kg' 等
         );
       SQL
 
       @db.execute <<~SQL
         CREATE TABLE activities (
-          time     TEXT NOT NULL,              -- ISO 8601 时间，如 '2020-08-14T08:00:00'
-          brief    TEXT,                       -- 简述
-          IFRI     TEXT NOT NULL,              -- 国际食品记录标识符（International Food Record Identifier）
-          amount   TEXT NOT NULL,              -- 带单位的量，如 '350g'、'6km' 等
-          PRIMARY KEY(time, IFRI)
+          time        TEXT NOT NULL,  -- ISO 8601 时间，如 '2020-08-14T08:00:00'
+          description TEXT,           -- 描述
+          ifri        TEXT NOT NULL,  -- 国际食品记录标识符（International Food Record Identifier）
+          amount      TEXT NOT NULL,  -- 带单位的量，如 '350g'、'6km' 等
+          PRIMARY KEY(time, ifri)
         );
       SQL
     end

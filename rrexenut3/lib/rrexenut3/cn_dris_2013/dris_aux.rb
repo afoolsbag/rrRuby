@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-12
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
 require 'ruby-units'
@@ -10,8 +10,8 @@ require 'ruby-units'
 module RrExeNut3
   module CnDris2013
     ##
-    # 辅助。
-    module Aux
+    # 参考摄入量辅助方法。
+    module DrisAux
       protected
 
       ##

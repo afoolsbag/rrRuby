@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-13
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
@@ -14,7 +14,7 @@ module RrExeNut3
     # 参考摄入量第一部分：能量。
     # DRIs Part 1: Energy.
     module DrisPart1
-      include Aux
+      include DrisAux
 
       # 碳水化合物的食物热效应（thermic effect of food），5% ~ 10%
       CHO_TEF = 0.075

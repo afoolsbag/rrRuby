@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-14
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
 module RrExeNut3
@@ -12,15 +12,15 @@ module RrExeNut3
     # Dietary Reference Intake.
     #
     # 可能的数据组合有
-    #   EER
-    #   LAMDR AI(percent) UAMDR
-    #   EAR RNI PI UL
-    #   AI(unit) PI UL
-    #   SPL PI UL
+    #   1.       EER
+    #   2. LAMDR AI(percent) UAMDR
+    #   3. EAR   RNI      PI UL
+    #   4.       AI(unit) PI UL
+    #   5.       SPL      PI UL
     #
     # HACK: 为了令 IDE Hinting 识别，多余地继承自结构体。
     #--
-    # rubocop:disable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Metrics/BlockLength, Style/StructInheritance
+    # rubocop:disable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Style/StructInheritance
     #++
     class Dri < Struct.new(
       # 平均需要量。
@@ -101,7 +101,7 @@ module RrExeNut3
       # 特定建议值。
       # Specific Proposed Level.
       #
-      #  @return [Unit, nil]
+      # @return [Unit, nil]
       :spl,
 
       keyword_init: true
@@ -115,30 +115,35 @@ module RrExeNut3
 
       ##
       # 是否含有 <tt>EER</tt>。
+      # @return [Boolean]
       def contains_eer?
         !eer.nil?
       end
 
       ##
       # 是否含有 <tt>LAMDR</tt>、<tt>AI</tt>（百分比）、<tt>UAMDR</tt> 中的一项或几项。
+      # @return [Boolean]
       def contains_lamdr_aipct_uamdr?
         !lamdr.nil? || ai&.kind == :unitless || !uamdr.nil?
       end
 
       ##
       # 是否含有 <tt>EAR</tt>、<tt>RNI</tt>、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      # @return [Boolean]
       def contains_ear_rni_pi_ul?
         !ear.nil? || !rni.nil? || !pi.nil? || !ul.nil?
       end
 
       ##
       # 是否含有 <tt>AI</tt>（单位量）、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      # @return [Boolean]
       def contains_aiunit_pi_ul?
         (!ai.nil? && ai.kind != :unitless) || !pi.nil? || !ul.nil?
       end
 
       ##
       # 是否含有 <tt>SPL</tt>、<tt>PI</tt>、<tt>UL</tt> 中的一项或几项。
+      # @return [Boolean]
       def contains_spl_pi_ul?
         !spl.nil? || !pi.nil? || !ul.nil?
       end
@@ -148,10 +153,12 @@ module RrExeNut3
       #
       #   <AI 1.7 L/d>
       #
-      # @param field [Symbol] 字段
+      # @param field [Symbol, #to_sym] 字段
       # @param force [Boolean] 即使值为空，也生成标签
       # @return [String, nil]
       def label(field, force: false)
+        field = field.to_sym unless field.is_a?(Symbol)
+
         if self[field]
           "<#{field.to_s.upcase} #{self[field]}>"
         elsif force && members.include?(field)
@@ -160,6 +167,6 @@ module RrExeNut3
       end
     end; end
 
-    # rubocop:enable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Metrics/BlockLength, Style/StructInheritance
+    # rubocop:enable Layout/EmptyLinesAroundArguments, Layout/EndAlignment, Style/StructInheritance
   end
 end

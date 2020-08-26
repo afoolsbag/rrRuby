@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-13
+# 2020-08-12 – 2020-08-26
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/aux_'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
@@ -19,7 +19,7 @@ module RrExeNut3
     # 第二类为人体可能必需的微量元素，有锰、硅、镍、硼、钒 5 种；
     # 第三类为具有潜在毒性，但在低剂量时，对人体可能是有益的微量元素，包括氟、铅、镉、汞、砷、铝、锂、锡 8 种。
     module DrisPart6
-      include Aux
+      include DrisAux
 
       # 人体必须的微量元素
 
