@@ -2,9 +2,10 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-14 – 2020-08-26
+# 2020-08-14 – 2020-08-27
 # Unlicense
 
+require 'ruby-units'
 require 'sqlite3'
 
 module RrExeNut3
@@ -23,11 +24,11 @@ module RrExeNut3
       raise ArgumentError, "Unexpected mode argument: #{mode}" unless MODE_VALID_VALUES.include?(mode)
 
       if File.exist?(path)
-        raise "The file #{path} already exists." unless %i[open open_or_new].include?(mode)
+        raise "档案 #{path} 已存在。" unless %i[open open_or_new].include?(mode)
 
         @db = SQLite3::Database.new(path)
       else
-        raise "The file #{path} not exists." unless %i[new open_or_new].include?(mode)
+        raise "档案 #{path} 不存在。" unless %i[new open_or_new].include?(mode)
 
         @db = SQLite3::Database.new(path)
         initialize_database
@@ -47,7 +48,7 @@ module RrExeNut3
 
       birthday, * = rows[0]
 
-      Date.iso8601(birthday) if birthday
+      Date.parse(birthday) if birthday
     end
 
     ##
@@ -56,7 +57,7 @@ module RrExeNut3
     # @param date [Date, String, #to_date] 日期
     # @return [void]
     def birthday=(date)
-      date = Date.iso8601(date) if date.is_a?(String)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       rows = @db.execute(<<~SQL)
@@ -84,30 +85,38 @@ module RrExeNut3
       end
     end
 
+    SexRow = Struct.new(
+      # @return [Date]
+      :date,
+      # @return [Symbol]
+      :sex
+    )
+
     ##
-    # 查询性别、孕期或哺乳期。
+    # 查询最近的性别、孕期或哺乳期。
     #
-    # @param date [Date, String, #to_date] 日期
-    # @return [Symbol, nil]
-    def select_sex(date)
-      date = Date.iso8601(date) if date.is_a?(String)
+    # @param date [Date, String, #to_date] 锚定日期
+    # @return [SexRow, nil]
+    def select_recent_sex(date)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       rows = @db.execute(<<~SQL, [date.iso8601])
-        SELECT sex
+        SELECT date, sex
           FROM sex
          WHERE date <= date(?)
          ORDER BY date DESC
          LIMIT 1;
       SQL
-      sex, * = rows[0]
+      return if rows[0].nil?
 
-      sex&.to_sym
+      date, sex, * = rows[0]
+      SexRow.new(Date.parse(date), sex.to_sym)
     end
 
     # @return [Symbol, nil]
     def sex
-      select_sex(Date.today)
+      select_recent_sex(Date.today)&.sex
     end
 
     ##
@@ -118,7 +127,7 @@ module RrExeNut3
     # @return [void]
     def insert_sex(sex, date = Date.today)
       sex = sex.to_sym unless sex.is_a?(Symbol)
-      date = Date.iso8601(date) if date.is_a?(String)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       @db.execute(<<~SQL, [date.iso8601, sex.to_s])
@@ -134,30 +143,38 @@ module RrExeNut3
       insert_sex(sex, Date.today)
     end
 
+    WeightRow = Struct.new(
+      # @return [Date]
+      :date,
+      # @return [Unit]
+      :weight
+    )
+
     ##
-    # 查询体重。
+    # 查询最近的体重。
     #
-    # @param date [Date, String, #to_date]
+    # @param date [Date, String, #to_date] 锚定日期
     # @return [Unit, nil]
-    def select_weight(date)
-      date = Date.iso8601(date) if date.is_a?(String)
+    def select_recent_weight(date)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       rows = @db.execute(<<~SQL, [date.iso8601])
-        SELECT weight
+        SELECT date, weight
           FROM weight
          WHERE date <= date(?)
          ORDER BY date DESC
          LIMIT 1;
       SQL
-      weight, * = rows[0]
+      return if rows[0].nil?
 
-      weight&.to_unit
+      date, weight, * = rows[0]
+      WeightRow.new(Date.parse(date), Unit.new(weight))
     end
 
     # @return [Unit, nil]
     def weight
-      select_weight(Date.today)
+      select_recent_weight(Date.today)&.weight
     end
 
     ##
@@ -168,7 +185,7 @@ module RrExeNut3
     # @return [void]
     def insert_weight(weight, date = Date.today)
       weight = weight.to_unit unless weight.is_a?(Unit)
-      date = Date.iso8601(date) if date.is_a?(String)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       @db.execute(<<~SQL, [date.iso8601, weight.to_s])
@@ -183,8 +200,7 @@ module RrExeNut3
       insert_weight(weight, Date.today)
     end
 
-    # rubocop:disable Style/StructInheritance
-    class ActivityRow < Struct.new(
+    ActivityRow = Struct.new(
       # @return [DateTime]
       :time,
       # @return [String, nil]
@@ -193,14 +209,12 @@ module RrExeNut3
       :ifri,
       # @return [Unit]
       :amount
-    ); end
-
-    # rubocop:enable Style/StructInheritance
+    )
 
     # @param date [Date, String, #to_date]
     # @return [Array<ActivityRow>]
-    def select_activities(date = Date.today)
-      date = Date.iso8601(date) if date.is_a?(String)
+    def select_activities_by_day(date = Date.today)
+      date = Date.parse(date) if date.is_a?(String)
       date = date.to_date unless date.is_a?(Date)
 
       rows = @db.execute(<<~SQL, [date.iso8601])
@@ -211,7 +225,7 @@ module RrExeNut3
       SQL
 
       rv = []
-      rows.each { |row| rv.append(ActivityRow.new(DateTime.iso8601(row[0]), row[1], row[2], row[3].to_unit)) }
+      rows.each { |row| rv.append(ActivityRow.new(DateTime.parse(row[0]), row[1], row[2], row[3].to_unit)) }
       rv
     end
 
@@ -222,9 +236,9 @@ module RrExeNut3
     # @return [void]
     def insert_activity(ifri, amount, description = nil, time = DateTime.now)
       ifri = ifri.to_s unless ifri.is_a?(String)
-      description = description.to_s if description && !description.is_a?(String)
       amount = amount.to_unit unless amount.is_a?(Unit)
-      time = DateTime.iso8601(time) if time.is_a?(String)
+      description = description.to_s if description && !description.is_a?(String)
+      time = DateTime.parse(time) if time.is_a?(String)
       time = time.to_datetime unless time.is_a?(DateTime)
 
       raise ArgumentError, "Unexpected amount argument: #{amount}" unless %i[mass volume].include?(amount.kind)

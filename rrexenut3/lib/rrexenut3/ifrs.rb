@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-24 – 2020-08-25
+# 2020-08-24 – 2020-08-27
 # Unlicense
 
 require 'rrexenut3/ifrs/cn_cdc_fct6_querier'
@@ -15,7 +15,7 @@ module RrExeNut3
   # International Food Records.
   module Ifrs
     IFRI_HANDLER = {
-      'CN.CDC.CNFCT6.': Ifrs::CnCdcFct6Querier,
+      'CN.CDC.FCT6.': Ifrs::CnCdcFct6Querier,
       'CN.NHC.LPF.': Ifrs::CnNhcLpfQuerier
     }.freeze
 
@@ -51,7 +51,7 @@ module RrExeNut3
     # @see http://archive.unu.edu/unupress/unupbooks/80774e/80774E00.htm
     #
     # @param ifri [String] 国际食品记录标识符
-    # @return [Nutrients, nil]
+    # @return [Array<String, Nutrients>, nil] 返回"名称、营养素对"，或返回空
     def self.query(ifri)
       IFRI_HANDLER.each { |k, v| return v.instance.query(ifri) if ifri.start_with?(k.to_s) }
       nil

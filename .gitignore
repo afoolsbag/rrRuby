@@ -224,4 +224,5 @@ build-iPhoneSimulator/
 Gemfile.lock
 
 /.idea/
+/rrexenut3/*.ren3p
 /rrexenut3/*.rrexenut3.profile

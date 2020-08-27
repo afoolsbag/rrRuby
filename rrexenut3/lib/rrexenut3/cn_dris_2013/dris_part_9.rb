@@ -31,18 +31,18 @@ module RrExeNut3
           when 1...4
             Dri.new
           when 4...7
-            Dri.new(ai: un('0.8L/d'))
+            Dri.new(ai: un('0.8kg/d'))
           when 7...11
-            Dri.new(ai: un('1.0L/d'))
+            Dri.new(ai: un('1.0kg/d'))
           when 11...14
-            male? ? Dri.new(ai: un('1.3L/d')) : Dri.new(ai: un('1.1L/d'))
+            male? ? Dri.new(ai: un('1.3kg/d')) : Dri.new(ai: un('1.1kg/d'))
           when 14...18
-            male? ? Dri.new(ai: un('1.4L/d')) : Dri.new(ai: un('1.2L/d'))
+            male? ? Dri.new(ai: un('1.4kg/d')) : Dri.new(ai: un('1.2kg/d'))
           else
-            male? ? Dri.new(ai: un('1.7L/d')) : Dri.new(ai: un('1.5L/d'))
+            male? ? Dri.new(ai: un('1.7kg/d')) : Dri.new(ai: un('1.5kg/d'))
           end
-        dri.ai += un('0.2L/d') if pregnancy?
-        dri.ai += un('0.6L/d') if lactation?
+        dri.ai += un('0.2kg/d') if pregnancy?
+        dri.ai += un('0.6kg/d') if lactation?
         dri
       end
 

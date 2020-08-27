@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-28 – 2020-08-26
+# 2020-07-28 – 2020-08-27
 # Unlicense
 
 require 'rrexenut3/infoods/tagname'
@@ -28,6 +28,8 @@ module RrExeNut3
 
       tagnames[sym] = tagname
     end
+
+    private_instance_methods :insert_tagname_to_tagnames
 
     ##
     # 从 .txt 文件中加载标签。
@@ -73,7 +75,23 @@ module RrExeNut3
       tagnames
     end
 
+    private_instance_methods :load_tagnames_established
+
+    # INFOODS 标签.
     # @return [Hash<Symbol=>RrExeNut3::Infoods::Tagname]
     TAGNAMES = load_tagnames_established.freeze
+
+    # INFOODS 能量（标签）符号。
+    ENER_SYMBOLS = %i[ENER- ENERA ENERC].freeze
+    # INFOODS 蛋白质（标签）符号。
+    PRO_SYMBOLS = %i[PRO- PROA PROCNA PROCNT PROCNP].freeze
+    # INFOODS 脂质（标签）符号。
+    FAT_SYMBOLS = %i[FAT FATCE FATNLEA].freeze
+    # INFOODS 碳水化合物（标签）符号。
+    CHO_SYMBOLS = %i[CHO- CHOCDF CHOCSM].freeze
+    # INFOODS 酒精（标签）符号。
+    ALC_SYMBOLS = %i[ALC].freeze
+    # INFOODS 纤维（标签）符号。
+    FIB_SYMBOLS = %i[FIB- FIBAD FIBADC FIBND FIBTG FIBTS FIBTSW].freeze
   end
 end
