@@ -48,5 +48,5 @@ task check: %i[lint test spec]
 desc 'Task chain: setup, lint, test, spec & rerdoc'
 task build: %i[setup lint test spec rerdoc]
 
-desc 'Default task, same as build'
-task default: :build
+desc 'Default task, same as run'
+task default: :run

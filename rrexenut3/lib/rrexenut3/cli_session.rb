@@ -43,12 +43,23 @@ module RrExeNut3
       nil
     end
 
+    # HACK: 为了令 IDE Hinting 识别，生成私有 reader 并标注
+
+    private
+
     # @return [String]
     attr_reader :name
-    # @return [Profile, nil]
-    attr_reader :profile
+
+    # @return [Profile]
+    def profile
+      raise "尚未加载档案" if @profile.nil?
+      @profile
+    end
+
     # @return [Date]
     attr_reader :focus_date
+
+    public
 
     def initialize
       @name = 'nil'
@@ -87,6 +98,7 @@ module RrExeNut3
     # @return [String] 富文本
     def info(text)
       text = text.to_s unless text.is_a?(String)
+
       text.colorize(:light_cyan)
     end
 
@@ -97,6 +109,7 @@ module RrExeNut3
     # @return [String] 富文本
     def warn(text)
       text = text.to_s unless text.is_a?(String)
+
       text.colorize(:light_yellow)
     end
 
@@ -109,6 +122,7 @@ module RrExeNut3
     # @return [String] 富文本
     def succ(text)
       text = text.to_s unless text.is_a?(String)
+
       text.colorize(:light_green)
     end
 
@@ -121,6 +135,7 @@ module RrExeNut3
     # @return [String] 富文本
     def fai1(text)
       text = text.to_s unless text.is_a?(String)
+
       text.colorize(:light_red)
     end
 
@@ -128,7 +143,7 @@ module RrExeNut3
     # 变更焦点日期。
     #
     # @param new_date [Date, String, #to_date] 新日期
-    # @return [void]
+    # @return [Date]
     def change_focus_date(new_date)
       new_date = Date.parse(new_date) if new_date.is_a?(String)
       new_date = new_date.to_date unless new_date.is_a?(Date)
@@ -136,15 +151,29 @@ module RrExeNut3
       @focus_date = new_date
     end
 
+    # @return [Date]
+    def change_focus_date_previous
+      @focus_date = @focus_date.prev_day
+    end
+
+    # @return [Date]
+    def change_focus_date_next
+      @focus_date = @focus_date.next_day
+    end
+
+    DEFAULT_PROFILE_EXTENSION = '.ren3p'
+
     ##
     # 加载档案。
     #
     # @param name [String, #to_s] 档案名
+    # @param ext [String, #to_s, nil] 后缀名
     # @return [void]
-    def load_profile(name)
+    def load_profile(name, ext = DEFAULT_PROFILE_EXTENSION)
       name = name.to_s unless name.is_a?(String)
+      ext = ext.to_s if ext && !ext.is_a?(String)
 
-      @profile = Profile.new(File.absolute_path("#{name}.ren3p"), mode: :open)
+      @profile = Profile.new(File.absolute_path("#{name}#{ext}"), mode: :open)
       @name = name
     end
 
@@ -152,28 +181,50 @@ module RrExeNut3
     # 加载指定目录下找到的首个档案
     #
     # @param dir [Dir, String, #to_dir]
-    def load_first_profile_in_dir(dir = '.')
+    def load_first_profile_in_dir(dir = '.', ext = DEFAULT_PROFILE_EXTENSION)
       dir = Dir.new(dir) if dir.is_a?(String)
       dir = dir.to_dir unless dir.is_a?(Dir)
+      ext = ext.to_s if ext && !ext.is_a?(String)
 
-      dir.each do |filename|
-        if filename =~ /(.*)\.ren3p$/
-          load_profile(Regexp.last_match(1))
-          break
-        end
-      end
+      dir.each { |filename| break if filename =~ /(.*)#{ext}$/ }
+      load_profile(Regexp.last_match(1)) if Regexp.last_match(1)
     end
 
     ##
     # 新建档案。
     #
     # @param name [String, #to_s] 档案名
+    # @param ext [String, #to_s, nil] 后缀名
     # @return [void]
-    def new_profile(name)
+    def new_profile(name, ext = DEFAULT_PROFILE_EXTENSION)
       name = name.to_s if name.is_a?(String)
+      ext = ext.to_s if ext && !ext.is_a?(String)
 
-      @profile = Profile.new(File.absolute_path("#{name}.ren3p"), mode: :new)
+      @profile = Profile.new(File.absolute_path("#{name}#{ext}"), mode: :new)
       @name = name
+    end
+
+    # @param date [Date, String, #to_date]
+    # @return [void]
+    def birthday=(date)
+      profile.birthday = date
+    end
+
+    # @return [Unit]
+    def age
+      Unit.new(@focus_date - profile.birthday, 'days')
+    end
+
+    # @param sex [Symbol, #to_sym]
+    # @return [void]
+    def sex=(sex)
+      profile.sex = sex
+    end
+
+    # @param weight [Unit, #to_unit]
+    # @return [void]
+    def weight=(weight)
+      profile.weight = weight
     end
 
     ##
@@ -181,16 +232,12 @@ module RrExeNut3
     #
     # @return [String]
     def list_activities_in_the_day
-      rows = @profile.select_activities_by_day(@focus_date)
+      rows = profile.select_activities_by_day(@focus_date)
 
       rv = ''
       rows.each do |row|
-        time = row.time
-        description = row.description
-        ifri = row.ifri
-        amount = row.amount
-        name, * = RrExeNut3::Ifrs.query(ifri)
-
+        time, description, ifri, amount = row.values
+        name, _nutrients = RrExeNut3::Ifrs.query(ifri)
         rv += "#{time.strftime('%T')}, #{description}, #{name}, #{amount}\n"
       end
       rv
@@ -208,7 +255,7 @@ module RrExeNut3
 
       now = Time.now
       time = DateTime.new(@focus_date.year, @focus_date.month, @focus_date.day, now.hour, now.min, now.sec)
-      @profile.insert_activity(ifri, amount, description, time)
+      profile.insert_activity(ifri, amount, description, time)
     end
 
     ##
@@ -216,21 +263,15 @@ module RrExeNut3
     #
     # @return [String]
     def summary_the_day
-      rows = @profile.select_activities_by_day(@focus_date)
+      rows = profile.select_activities_by_day(@focus_date)
       intake = Nutrients.new
       rows.each do |row|
-        ifri = row.ifri
-        amount = row.amount
-        _, nutrients = RrExeNut3::Ifrs.query(ifri)
-
-        tmp = (nutrients * amount)
-        intake += tmp
+        _time, _description, ifri, amount = row.values
+        _name, nutrients = RrExeNut3::Ifrs.query(ifri)
+        intake += nutrients * amount
       end
 
-      sex = @profile.sex
-      age = Unit.new(Date.today - @profile.birthday, 'days')
-      weight = @profile.weight
-      dris = RrExeNut3::CnDris2013::Dris.new(sex: sex, age: age, weight: weight)
+      dris = RrExeNut3::CnDris2013::Dris.new(sex: profile.sex, age: age, weight: profile.weight)
 
       RrExeNut3::CnDris2013.summary(intake, dris)
     end

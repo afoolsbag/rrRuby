@@ -23,17 +23,22 @@ module Commands
   ##
   # 映射 command => symbol
   # @return [Hash<String=>Symbol>]
-  @command_symbol_mapping = {}
+  @cmd2sym = {}
 
   ##
   # 映射 symbol => parameters
   # @return [Hash<Symbol=>Array<String>>]
-  @symbol_parameters_mapping = {}
+  @sym2params = {}
+
+  ##
+  # 映射 symbol => options
+  # @return [Hash<Symbol=>Array<String>>]
+  @sym2opts = {}
 
   ##
   # 映射 symbol => description
   # @return [Hash<Symbol=>String>]
-  @symbol_description_mapping = {}
+  @sym2desc = {}
 
   ##
   # 建立映射。
@@ -41,12 +46,14 @@ module Commands
   # @param commands [Array<String>] 命令名列表
   # @param symbol [Symbol] 符号
   # @param parameters [Array<String>] 参数列表
+  # @param option [Array<String>] 选项列表
   # @param description [String] 描述
   # @return [void]
-  def self.map(commands, symbol, parameters, description)
-    commands.each { |command| @command_symbol_mapping[command] = symbol }
-    @symbol_parameters_mapping[symbol] = parameters
-    @symbol_description_mapping[symbol] = description
+  def self.map(commands, symbol, parameters, options, description)
+    commands.each { |command| @cmd2sym[command] = symbol }
+    @sym2params[symbol] = parameters
+    @sym2opts[symbol] = options
+    @sym2desc[symbol] = description
     nil
   end
 
@@ -58,15 +65,27 @@ module Commands
   # @param session [RrExeNut3::CliSession] 命令行界面会话
   # @return [:break, Object] 终止循环标志
   def self.call(command, arguments, session)
-    raise NameError, %(无法理解 #{command} 命令。) unless @command_symbol_mapping.include?(command)
+    raise NameError, %(无法理解 #{command} 命令。) unless @cmd2sym.include?(command)
 
-    symbol = @command_symbol_mapping[command]
+    symbol = @cmd2sym[command]
     raise %(命令 #{command} 被接受，但其对应方法 #{symbol} 未定义。) unless singleton_methods(false).include?(symbol)
 
     singleton_method(symbol).call(arguments, session)
   end
 
-  map(%w[change], :change, ['date'], '切换到某一天')
+  map(%w[birthday], :birthday, ['date'], [], '设定生日')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CliSession] 命令行界面会话
+  # @return [void]
+  def self.birthday(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+
+    sess.birthday = args[1]
+    puts
+  end
+
+  map(%w[change], :change, ['date'], [], '切换到某一天')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -75,11 +94,10 @@ module Commands
     raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
 
     sess.change_focus_date(args[1])
-    puts sess.succ("切换到#{sess.focus_date.year}年#{sess.focus_date.month}月#{sess.focus_date.day}日。")
     puts
   end
 
-  map(%w[clear cls], :clear, [], '清空屏幕')
+  map(%w[clear cls], :clear, [], [], '清空屏幕')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -91,7 +109,7 @@ module Commands
     print "\e[2J\e[F"
   end
 
-  map(%w[do exercise], :exercise, %w[exercise_id amount], '运动，录入当日活动')
+  map(%w[do exercise], :exercise, %w[exercise_id amount], ['description'], '运动，录入当日活动')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -99,41 +117,47 @@ module Commands
   def self.exercise(args, sess)
     raise ArgumentError, '该命令需要至少 2 个参数。' if args.length < 3
 
-    _, ifri, amount, description = *args
-    sess.record_activity(ifri, amount, description)
+    sess.record_activity(args[1], args[2], args[3])
   end
 
-  map(%w[? help], :help, [], '帮助')
+  map(%w[? help], :help, [], [], '帮助')
   ##
+  #   cmd <param1> <param2> [opt1] [opt2] desc
+  #      |<  params len  >||< opts len >|
+  #   |<          usage_width          >|
+  #
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
   # @return [void]
   def self.help(_args, _sess)
     usage_width = 0
-    @command_symbol_mapping.each do |cmd, sym|
-      usage_len = cmd.length + (@symbol_parameters_mapping[sym].map { |str| 3 + str.length }.reduce(:+) || 0)
+    @cmd2sym.each do |cmd, sym|
+      params_len = @sym2params[sym].map { |str| 3 + str.length }.reduce(:+) || 0
+      opts_len = @sym2opts[sym].map { |str| 3 + str.length }.reduce(:+) || 0
+      usage_len = cmd.length + params_len + opts_len
       usage_width = usage_len if usage_width < usage_len
     end
 
     puts '当前可以理解的命令有：'
-    @command_symbol_mapping.sort_by(&:first).to_h.each do |cmd, sym|
-      params = @symbol_parameters_mapping[sym]
-      desc = @symbol_description_mapping[sym]
+    @cmd2sym.sort_by(&:first).to_h.each do |cmd, sym|
+      params = @sym2params[sym]
+      opts = @sym2opts[sym]
+      desc = @sym2desc[sym]
 
-      usage_len = cmd.length + (params.map { |str| 3 + str.length }.reduce(:+) || 0)
+      params_len = params.map { |str| 3 + str.length }.reduce(:+) || 0
+      opts_len = opts.map { |str| 3 + str.length }.reduce(:+) || 0
+      usage_len = cmd.length + params_len + opts_len
       usage_padding = ' ' * (usage_width - usage_len)
 
-      colorized_usage = cmd.colorize(:default)
-      params.each do |param|
-        colorized_usage = "#{colorized_usage} <#{param.colorize(:light_black)}>"
-      end
-      colorized_desc = desc.colorize(:light_black)
-      puts "  #{colorized_usage}#{usage_padding} #{colorized_desc}"
+      usage = cmd.colorize(:default)
+      params.each { |param| usage += " <#{param.colorize(:light_black)}>" }
+      opts.each { |opt| usage += " [#{opt.colorize(:light_black)}]" }
+      puts "  #{usage}#{usage_padding} #{desc.colorize(:light_black)}"
     end
     puts
   end
 
-  map(%w[drink eat ingest], :ingest, %w[food_id intake], '摄入，录入当日活动')
+  map(%w[drink eat ingest], :ingest, %w[food_id intake], ['description'], '摄入，录入当日活动')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -141,21 +165,20 @@ module Commands
   def self.ingest(args, sess)
     raise ArgumentError, '该命令需要至少 2 个参数。' if args.length < 3
 
-    _, ifri, amount, description = *args
-    sess.record_activity(ifri, amount, description)
+    sess.record_activity(args[1], args[2], args[3])
   end
 
-  map(%w[list ll ls], :list, [], '列出当日活动')
+  map(%w[list ll ls], :list, [], [], '列出当日活动')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
   # @return [void]
-  def self.list(_, sess)
+  def self.list(_args, sess)
     puts sess.list_activities_in_the_day
     puts
   end
 
-  map(%w[load_profile], :load_profile, ['profile_name'], '加载档案')
+  map(%w[load_profile], :load_profile, ['profile_name'], [], '加载档案')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -170,7 +193,7 @@ module Commands
     puts
   end
 
-  map(%w[new_profile], :new_profile, ['profile_name'], '新建档案')
+  map(%w[new_profile], :new_profile, ['profile_name'], [], '新建档案')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -181,31 +204,31 @@ module Commands
     profile_name = args[1]
 
     sess.new_profile(profile_name)
-    puts sess.succ("档案 #{profile_name} 新建完毕。")
+    puts sess.succ("档案 #{profile_name} 新建并加载完毕。")
     puts
   end
 
-  map(%w[> next], :next, [], '切换到后一天')
+  map(%w[> next], :next, [], [], '切换到后一天')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
   # @return [void]
-  def self.next(args, sess)
-    args[1] = (sess.focus_date + 1).iso8601
-    change(args, sess)
+  def self.next(_args, sess)
+    sess.change_focus_date_next
+    puts
   end
 
-  map(%w[< previous], :previous, [], '切换到前一天')
+  map(%w[< previous], :previous, [], [], '切换到前一天')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
   # @return [void]
-  def self.previous(args, sess)
-    args[1] = (sess.focus_date - 1).iso8601
-    change(args, sess)
+  def self.previous(_args, sess)
+    sess.change_focus_date_previous
+    puts
   end
 
-  map(%w[close exit quit], :quit, [], '退出程序')
+  map(%w[close exit quit], :quit, [], [], '退出程序')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -214,7 +237,7 @@ module Commands
     :break
   end
 
-  map(%w[delete remove rm], :remove, ['activity'], '从当日移除一项活动')
+  map(%w[delete remove rm], :remove, ['activity'], [], '从当日移除一项活动')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -223,7 +246,19 @@ module Commands
     raise NotImplementedError
   end
 
-  map(%w[summary], :summary, [], '显示当日摘要')
+  map(%w[sex], :sex, ['sex'], [], '记录性别、孕期或哺乳期')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CliSession] 命令行界面会话
+  # @return [void]
+  def self.sex(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+
+    sess.sex = args[1]
+    puts
+  end
+
+  map(%w[summary], :summary, [], [], '显示当日摘要')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
@@ -233,18 +268,30 @@ module Commands
     puts
   end
 
-  map(%w[= today], :today, [], '切换到今天')
+  map(%w[= today], :today, [], [], '切换到今天')
   ##
   # @param args [Array<String>] 命令行参数
   # @param sess [RrExeNut3::CliSession] 命令行界面会话
   # @return [void]
-  def self.today(args, sess)
-    args[1] = Date.today.iso8601
-    change(args, sess)
+  def self.today(_args, sess)
+    sess.change_focus_date(Date.today)
+    puts
+  end
+
+  map(%w[weight], :weight, ['weight'], [], '记录体重')
+  ##
+  # @param args [Array<String>] 命令行参数
+  # @param sess [RrExeNut3::CliSession] 命令行界面会话
+  # @return [void]
+  def self.weight(args, sess)
+    raise ArgumentError, '该命令需要至少 1 个参数。' if args.length < 2
+
+    sess.weight = args[1]
+    puts
   end
 
   # 命令
-  COMMANDS = @command_symbol_mapping.keys
+  COMMANDS = @cmd2sym.keys
   # 命令缩写映射
   COMMAND_ABBREV_MAPPING = COMMANDS.abbrev
 end
