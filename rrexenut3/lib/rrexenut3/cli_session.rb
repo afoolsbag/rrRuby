@@ -5,9 +5,11 @@
 # 2020-08-03 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'colorize'
 require 'rbconfig'
 require 'sqlite3'
+$VERBOSE = old
 
 require 'rrexenut3/cn_dris_2013'
 require 'rrexenut3/nutrients'

@@ -2,15 +2,17 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-24 – 2020-08-27
+# 2020-07-24 – 2020-08-28
 # Unlicense
 
 $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
+old, $VERBOSE = $VERBOSE, nil
 require 'abbrev'
 require 'colorize'
 require 'date'
 require 'readline'
+$VERBOSE = old
 
 require 'rrexenut3/cli_session'
 require 'rrexenut3/ifrs'

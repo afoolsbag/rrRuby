@@ -2,11 +2,13 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-06 – 2020-08-12
+# 2020-08-06 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'roo'
 require 'roo-xls'
+$VERBOSE = old
 
 require 'rrexenut3/infoods/tagname'
 
@@ -42,7 +44,10 @@ module RrExeNut3
       # @param xls_path [String] +.xls+ 文件路径
       # @param block [Proc<Tagname>] 每当成功解析一项，调用一次
       def self.parse(xls_path, &block)
+        old, $VERBOSE = $VERBOSE, nil
         xls = Roo::Spreadsheet.open(xls_path, mode: 'rb')
+        $VERBOSE = old
+
         sheet = xls.sheet('TAGNAMES')
         sheet.each(clean: true, **COLUMN_SYMBOL_NAME_MAPPING) do |hash|
           next if hash[:tagname].nil? || hash[:tagname].empty? || hash[:tagname] == 'TAGNAME'

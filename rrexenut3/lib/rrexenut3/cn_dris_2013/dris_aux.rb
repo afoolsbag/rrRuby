@@ -2,10 +2,12 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-26
+# 2020-08-12 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'ruby-units'
+$VERBOSE = old
 
 module RrExeNut3
   module CnDris2013

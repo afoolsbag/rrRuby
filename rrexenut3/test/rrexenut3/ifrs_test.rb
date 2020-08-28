@@ -2,10 +2,12 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-25 – 2020-08-26
+# 2020-08-25 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'minitest/autorun'
+$VERBOSE = old
 
 require 'rrexenut3/ifrs'
 

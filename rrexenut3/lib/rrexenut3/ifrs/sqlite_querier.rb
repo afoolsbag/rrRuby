@@ -5,7 +5,9 @@
 # 2020-08-25 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'sqlite3'
+$VERBOSE = old
 
 require 'rrexenut3/infoods'
 require 'rrexenut3/nutrients'

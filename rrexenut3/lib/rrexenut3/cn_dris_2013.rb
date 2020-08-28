@@ -5,8 +5,10 @@
 # 2020-08-07 – 2020-08-28
 # Unlicense
 
+old, $VERBOSE = $VERBOSE, nil
 require 'colorize'
 require 'ruby-units'
+$VERBOSE = old
 
 require 'rrexenut3/cn_dris_2013/dris'
 require 'rrexenut3/infoods/tagname'

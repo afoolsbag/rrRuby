@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-12 – 2020-08-26
+# 2020-08-12 – 2020-08-28
 # Unlicense
 
-require 'rrexenut3/cn_dris_2013/dris_aux'
 require 'rrexenut3/cn_dris_2013/dri'
+require 'rrexenut3/cn_dris_2013/dris_aux'
 
 module RrExeNut3
   module CnDris2013
