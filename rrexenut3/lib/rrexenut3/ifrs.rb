@@ -5,8 +5,11 @@
 # 2020-08-24 – 2020-08-28
 # Unlicense
 
+require 'rrexenut3/ifrs/cn_cdc_fcd_querier'
 require 'rrexenut3/ifrs/cn_cdc_fct6_querier'
 require 'rrexenut3/ifrs/cn_nhc_lpf_querier'
+require 'rrexenut3/ifrs/handlers'
+require 'rrexenut3/ifrs/nicknames'
 require 'rrexenut3/nutrients'
 
 module RrExeNut3
@@ -14,11 +17,6 @@ module RrExeNut3
   # 国际食品记录。
   # International Food Records.
   module Ifrs
-    IFRI_HANDLER = {
-      'CN.CDC.FCT6.': Ifrs::CnCdcFct6Querier,
-      'CN.NHC.LPF.': Ifrs::CnNhcLpfQuerier
-    }.freeze
-
     ##
     # 查询。
     #
@@ -27,6 +25,7 @@ module RrExeNut3
     #   CN.              # 中国
     #   CN.CDC.          # 中国疾病预防控制中心
     #   CN.CDC.FCT6.     # 中国食物成分表：第六版
+    #   CN.CDC.FDC.      # 中国食物营养成分查询平台
     #   CN.NHC.          # 中国国家卫生健康委员会
     #   CN.NHC.LPF.      # 中国预包装食品标签（Label of Prepackaged Food）
     #   OC.              # 大洋洲
@@ -59,6 +58,9 @@ module RrExeNut3
 
       # 智能查询
 
+      # 在昵称映射表中
+      return _query(NICKNAMES[ifri]) if NICKNAMES.include?(ifri)
+
       # 以 69 开头的 13 位数字，推断可能是属于中国的 GTIN 码，尝试之
       return _query("CN.NHC.LPF.#{ifri}") if ifri =~ /^69\d{11}$/
 
@@ -67,7 +69,7 @@ module RrExeNut3
 
     # 精确查询
     def self._query(ifri)
-      IFRI_HANDLER.each { |k, v| return v.instance.query(ifri) if ifri.start_with?(k.to_s) }
+      HANDLERS.each { |k, v| return v.instance.query(ifri) if ifri.start_with?(k.to_s) }
       nil
     end
 
