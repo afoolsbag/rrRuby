@@ -2,10 +2,11 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-03 – 2020-08-27
+# 2020-08-03 – 2020-08-28
 # Unlicense
 
 require 'colorize'
+require 'rbconfig'
 require 'sqlite3'
 
 require 'rrexenut3/cn_dris_2013'
@@ -161,6 +162,41 @@ module RrExeNut3
       @focus_date = @focus_date.next_day
     end
 
+    # @return [Boolean]
+    def windows?
+      !!(RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+    end
+
+    ##
+    # 备份文件。
+    #
+    #   abc.ext -> abc.ext
+    #   .          abc.ext.~20200828T091737000
+    #
+    # @param path [String, #to_s] 文件路径
+    # @param max_count [Fixnum] 最大保留数
+    # @param silent [Boolean] 静默，出现异常时返回而不抛出
+    def backup_file(path, max_count: 3, silent: true)
+      path = path.to_s unless path.is_a?(String)
+      path = File.absolute_path(path) unless File.absolute_path?(path)
+
+      if File.file?(path)
+        raise "欲备份的文件不存在 #{path}" unless silent
+
+        return
+      end
+
+      old_backups = []
+      Dir.glob("#{path}.~*") { |old_backup| old_backups.append(old_backup) }
+      old_backups.sort!.reverse!
+      FileUtils.remove_file(old_backups.pop) while old_backups.length >= max_count
+
+      new_backup = "#{path}.~#{DateTime.now.strftime('%Y%m%dT%H%M%S%3N')}"
+      FileUtils.cp(path, new_backup)
+
+      system(%(ATTRIB +H "#{new_backup}")) if windows?
+    end
+
     DEFAULT_PROFILE_EXTENSION = '.ren3p'
 
     ##
@@ -173,7 +209,9 @@ module RrExeNut3
       name = name.to_s unless name.is_a?(String)
       ext = ext.to_s if ext && !ext.is_a?(String)
 
-      @profile = Profile.new(File.absolute_path("#{name}#{ext}"), mode: :open)
+      path = File.absolute_path("#{name}#{ext}")
+      backup_file(path)
+      @profile = Profile.new(path, mode: :open)
       @name = name
     end
 
