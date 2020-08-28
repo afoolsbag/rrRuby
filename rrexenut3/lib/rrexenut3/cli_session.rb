@@ -180,7 +180,7 @@ module RrExeNut3
       path = path.to_s unless path.is_a?(String)
       path = File.absolute_path(path) unless File.absolute_path?(path)
 
-      if File.file?(path)
+      unless File.file?(path)
         raise "欲备份的文件不存在 #{path}" unless silent
 
         return
