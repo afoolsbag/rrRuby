@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-25 – 2020-08-27
+# 2020-08-25 – 2020-08-28
 # Unlicense
 
 require 'sqlite3'
@@ -106,7 +106,7 @@ module RrExeNut3
           nut[key] = value if Infoods::TAGNAMES.include?(key)
         end
 
-        [name, nut]
+        @cache[ifri] = [name, nut]
       end
     end
   end

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-24 – 2020-08-27
+# 2020-08-24 – 2020-08-28
 # Unlicense
 
 require 'rrexenut3/ifrs/cn_cdc_fct6_querier'
@@ -53,8 +53,24 @@ module RrExeNut3
     # @param ifri [String] 国际食品记录标识符
     # @return [Array<String, Nutrients>, nil] 返回"名称、营养素对"，或返回空
     def self.query(ifri)
+      # 精确查询
+      rv = _query(ifri)
+      return rv if rv
+
+      # 智能查询
+
+      # 以 69 开头的 13 位数字，推断可能是属于中国的 GTIN 码，尝试之
+      return _query("CN.NHC.LPF.#{ifri}") if ifri =~ /^69\d{11}$/
+
+      nil
+    end
+
+    # 精确查询
+    def self._query(ifri)
       IFRI_HANDLER.each { |k, v| return v.instance.query(ifri) if ifri.start_with?(k.to_s) }
       nil
     end
+
+    private_class_method :_query
   end
 end

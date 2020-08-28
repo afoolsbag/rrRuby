@@ -64,30 +64,110 @@ module RrExeNut3
       raise ArgumentError, "未知的标签：#{tagname}" unless Infoods::TAGNAMES.keys.include?(tagname)
       raise ArgumentError, "营养成分值必须为质量或热量：{#{tagname}=>#{value}}" unless %i[mass energy].include?(value.kind) # rubocop:disable Layout/LineLength
 
-      @contained_nutrients[tagname] = value
+      @contained_nutrients[tagname] = value.convert_to(Infoods::TAGNAMES[tagname].unit)
     end
 
+    # conversion factor for calculating energy from protein
     PRO_ENER = Unit.new('17kJ/g').freeze
+    # conversion factor for calculating energy from fat
     FAT_ENER = Unit.new('37kJ/g').freeze
+    # conversion factor for calculating energy from carbohydrate
     CHO_ENER = Unit.new('17kJ/g').freeze
+    # conversion factor for calculating energy from alcohol
     ALC_ENER = Unit.new('29kJ/g').freeze
+    # conversion factor for calculating energy from fiber
     FIB_ENER = Unit.new('8kJ/g').freeze
+
+    ##
+    # 从蛋白质计算热量。
+    # @return [Unit]
+    def enerxp
+      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+
+      rv = Unit.new('0kJ')
+      (Infoods::PRO_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * PRO_ENER }
+      rv
+    end
+
+    ##
+    # 从脂质计算热量。
+    # @return [Unit]
+    def enerxf
+      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+
+      rv = Unit.new('0kJ')
+      (Infoods::FAT_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * FAT_ENER }
+      rv
+    end
+
+    ##
+    # 从碳水化合物计算热量。
+    # @return [Unit]
+    def enerxc
+      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+
+      rv = Unit.new('0kJ')
+      (Infoods::CHO_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * PRO_ENER }
+      rv
+    end
+
+    ##
+    # 从酒精计算热量。
+    # @return [Unit]
+    def enerxa
+      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+
+      rv = Unit.new('0kJ')
+      (Infoods::ALC_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * ALC_ENER }
+      rv
+    end
+
+    ##
+    # 从纤维计算热量。
+    # @return [Unit]
+    def enerxb
+      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+
+      rv = Unit.new('0kJ')
+      (Infoods::FIB_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * FIB_ENER }
+      rv
+    end
 
     ##
     # 从产能营养素计算热量。
     # @return [Unit]
     def enerc
-      raise ArgumentError, '仅允许份量单位为标量 1 的营养成分计算热量' unless @unit_quantity == 1
+      (enerxp + enerxf + enerxc + enerxa + enerxb).convert_to('kJ')
+    end
 
-      rv = Unit.new('0kJ')
+    ##
+    # 蛋白质的能量贡献百分比
+    def enerpp
+      (ererxp / enerc).convert_to('%')
+    end
 
-      (Infoods::PRO_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * PRO_ENER }
-      (Infoods::FAT_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * FAT_ENER }
-      (Infoods::CHO_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * PRO_ENER }
-      (Infoods::ALC_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * ALC_ENER }
-      (Infoods::FIB_SYMBOLS & @contained_nutrients.keys).each { |sym| rv += @contained_nutrients[sym] * FIB_ENER }
+    ##
+    # 脂质的能量贡献百分比
+    def enerpf
+      (ererxf / enerc).convert_to('%')
+    end
 
-      rv
+    ##
+    # 碳水化合物的能量贡献百分比
+    def enerpc
+      (ererxc / enerc).convert_to('%')
+    end
+
+    ##
+    # 酒精的能量贡献百分比
+    def enerpa
+      (ererxa / enerc).convert_to('%')
+    end
+
+    ##
+    # 纤维的能量贡献百分比
+    def enerpb
+      (ererxb / enerc).convert_to('%')
     end
 
     ##

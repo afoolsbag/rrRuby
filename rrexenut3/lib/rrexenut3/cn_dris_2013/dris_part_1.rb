@@ -39,6 +39,9 @@ module RrExeNut3
         dri.eer += un('50kcal/d') if first_trimester?
         dri.eer += un('300kcal/d') if second_trimester?
         dri.eer += un('450kcal/d') if third_trimester?
+
+        dri.eer = dri.eer.convert_to('kJ/d')
+
         dri
       end
 

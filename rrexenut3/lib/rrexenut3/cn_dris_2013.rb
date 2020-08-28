@@ -2,9 +2,10 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-07 – 2020-08-26
+# 2020-08-07 – 2020-08-28
 # Unlicense
 
+require 'colorize'
 require 'ruby-units'
 
 require 'rrexenut3/cn_dris_2013/dris'
@@ -30,8 +31,7 @@ module RrExeNut3
         if elem.instance_of?(String)
           rv += "#{elem}\n"
         elsif elem.instance_of?(Array)
-          tagname = elem[0]
-          driname = elem[1]
+          tagname, driname = elem
           rv += summary_line(tagname.to_s, intakes[tagname], dris.send(driname), duration)
         else
           raise 'Logic error.'
@@ -51,61 +51,170 @@ module RrExeNut3
     def self.summary_line(name, intake, dri, duration)
       return '' if dri.empty?
 
+      # prefix: __name:____
       align = ' ' * (8 - name.length)
-
-      if intake.nil?
-        rv = ''
-        label = ->(field) { dri[field] ? " <#{field.to_s.upcase} #{dri[field]}>" : nil }
-        rv += "  #{name}:#{align}#{label.call(:eer)}\n" if dri.contains_eer?
-        rv += "  #{name}:#{align}#{label.call(:lamdr)}#{label.call(:ai)}#{label.call(:uamdr)}\n" if dri.contains_lamdr_aipct_uamdr?
-        if dri.contains_ear_rni_pi_ul?
-          rv += "  #{name}:#{align}#{label.call(:ear)}#{label.call(:rni)}#{label.call(:pi)}#{label.call(:ul)}\n"
-        elsif dri.contains_aiunit_pi_ul?
-          rv += "  #{name}:#{align}#{label.call(:ai)}#{label.call(:pi)}#{label.call(:ul)}\n"
-        elsif dri.contains_spl_pi_ul?
-          rv += "  #{name}:#{align}#{label.call(:spl)}#{label.call(:pi)}#{label.call(:ul)}\n"
-        end
-        return rv
-      end
+      prefix = "  #{name}:#{align}"
 
       rv = ''
-      if dri.contains_eer?
-        # TODO
+      rv += summary_line_eer(prefix, intake, dri, duration) if dri.contains_eer?
+      rv += summary_line_lamdr_aipct_uamdr(prefix, intake, dri, duration) if dri.contains_lamdr_aipct_uamdr?
+      if dri.contains_ear_rni_pi_ul?
+        rv += summary_line_ear_rni_pi_ul(prefix, intake, dri, duration)
+      elsif dri.contains_aiunit_pi_ul?
+        rv += summary_line_aiunit_pi_ul(prefix, intake, dri, duration)
+      elsif dri.contains_spl_pi_ul?
+        rv += summary_line_spl_pi_ul(prefix, intake, dri, duration)
+      end
+      rv
+    end
+
+    private_class_method :summary_line
+
+    # @param prefix [String] 前导文本。
+    # @param intake [Unit] 某段时间内，某营养素的摄入量。
+    # @param dri [Dri] 某营养素的参考摄入量。
+    # @param duration [Unit] 时间段。
+    # @return [String]
+    def self.summary_line_eer(prefix, intake, dri, duration)
+      return "#{prefix} #{dri.label(:eer)&.colorize(:light_black)}\n" if intake.nil?
+
+      left = nil
+      right = nil
+      compare = lambda do |field|
+        if intake < duration * dri[field]
+          right = " #{dri.label(field)&.colorize(:light_black)}"
+        else
+          left = " #{dri.label(field)&.colorize(:light_black)}"
+        end
+      end
+      compare.call(:eer) if dri.eer
+      "#{prefix}#{left} [#{intake}]#{right}\n"
+    end
+
+    private_class_method :summary_line_eer
+
+    # @param prefix [String] 前导文本。
+    # @param intake [Unit] 某段时间内，某营养素的摄入量。
+    # @param dri [Dri] 某营养素的参考摄入量。
+    # @param duration [Unit] 时间段。
+    # @return [String]
+    def self.summary_line_lamdr_aipct_uamdr(prefix, intake, dri, duration)
+      if intake.nil?
+        lamdr = dri.label(:lamdr)&.colorize(:light_black)
+        lamdr &&= " #{lamdr}"
+        ai = dri.label(:ai)&.colorize(:light_black)
+        ai &&= " #{ai}"
+        uamdr = dri.label(:uamdr)&.colorize(:light_black)
+        uamdr &&= " #{uamdr}"
+        return "#{prefix}#{lamdr}#{ai}#{uamdr}\n"
       end
 
-      if dri.contains_lamdr_aipct_uamdr?
-        # TODO
+      # TODO
+      ''
+    end
+
+    private_class_method :summary_line_lamdr_aipct_uamdr
+
+    # @param prefix [String] 前导文本。
+    # @param intake [Unit] 某段时间内，某营养素的摄入量。
+    # @param dri [Dri] 某营养素的参考摄入量。
+    # @param duration [Unit] 时间段。
+    # @return [String]
+    def self.summary_line_ear_rni_pi_ul(prefix, intake, dri, duration)
+      if intake.nil?
+        ear = dri.label(:ear)&.colorize(:light_black)
+        ear &&= " #{ear}"
+        rni = dri.label(:rni)&.colorize(:light_black)
+        rni &&= " #{rni}"
+        pi = dri.label(:pi)&.colorize(:light_black)
+        pi &&= " #{pi}"
+        ul = dri.label(:ul)&.colorize(:light_black)
+        ul &&= " #{ul}"
+        return "#{prefix}#{ear}#{rni}#{pi}#{ul}\n"
       end
 
       left = nil
       right = nil
       compare = lambda do |field|
         if intake < duration * dri[field]
-          right = " <#{field.to_s.upcase} #{dri[field]}>"
+          right = " #{dri.label(field)&.colorize(:light_black)}"
         else
-          left = " <#{field.to_s.upcase} #{dri[field]}>"
+          left = " #{dri.label(field)&.colorize(:light_black)}"
         end
       end
-      if dri.contains_ear_rni_pi_ul?
-        compare.call(:ear) if dri.ear
-        compare.call(:rni) if right.nil? && dri.rni
-        compare.call(:pi) if right.nil? && dri.pi
-        compare.call(:ul) if right.nil? && dri.ul
-        rv += "  #{name}:#{align}#{left} #{intake}#{right}\n"
-      elsif dri.contains_aiunit_pi_ul?
-        compare.call(:ai) if dri.ai
-        compare.call(:pi) if right.nil? && dri.pi
-        compare.call(:ul) if right.nil? && dri.ul
-        rv += "  #{name}:#{align}#{left} #{intake}#{right}\n"
-      elsif dri.contains_spl_pi_ul?
-        compare.call(:spl) if dri.spl
-        compare.call(:pi) if right.nil? && dri.pi
-        compare.call(:ul) if right.nil? && dri.ul
-        rv += "  #{name}:#{align}#{left} #{intake}#{right}\n"
-      end
-      rv
+      compare.call(:ear) if dri.ear
+      compare.call(:rni) if right.nil? && dri.rni
+      compare.call(:pi) if right.nil? && dri.pi
+      compare.call(:ul) if right.nil? && dri.ul
+      "#{prefix}#{left} [#{intake}]#{right}\n"
     end
 
-    private_class_method :summary_line
+    private_class_method :summary_line_ear_rni_pi_ul
+
+    # @param prefix [String] 前导文本。
+    # @param intake [Unit] 某段时间内，某营养素的摄入量。
+    # @param dri [Dri] 某营养素的参考摄入量。
+    # @param duration [Unit] 时间段。
+    # @return [String]
+    def self.summary_line_aiunit_pi_ul(prefix, intake, dri, duration)
+      if intake.nil?
+        ai = dri.label(:ai)&.colorize(:light_black)
+        ai &&= " #{ai}"
+        pi = dri.label(:pi)&.colorize(:light_black)
+        pi &&= " #{pi}"
+        ul = dri.label(:ul)&.colorize(:light_black)
+        ul &&= " #{ul}"
+        return "#{prefix}#{ai}#{pi}#{ul}\n"
+      end
+
+      left = nil
+      right = nil
+      compare = lambda do |field|
+        if intake < duration * dri[field]
+          right = " #{dri.label(field)&.colorize(:light_black)}"
+        else
+          left = " #{dri.label(field)&.colorize(:light_black)}"
+        end
+      end
+      compare.call(:ai) if dri.ai
+      compare.call(:pi) if right.nil? && dri.pi
+      compare.call(:ul) if right.nil? && dri.ul
+      "#{prefix}#{left} [#{intake}]#{right}\n"
+    end
+
+    private_class_method :summary_line_aiunit_pi_ul
+
+    # @param prefix [String] 前导文本
+    # @param intake [Unit] 某段时间内，某营养素的摄入量。
+    # @param dri [Dri] 某营养素的参考摄入量。
+    # @param duration [Unit] 时间段。
+    # @return [String]
+    def self.summary_line_spl_pi_ul(prefix, intake, dri, duration)
+      if intake.nil?
+        spl = dri.label(:ai)&.colorize(:light_black)
+        spl &&= " #{spl}"
+        pi = dri.label(:pi)&.colorize(:light_black)
+        pi &&= " #{pi}"
+        ul = dri.label(:ul)&.colorize(:light_black)
+        ul &&= " #{ul}"
+        return "#{prefix}#{spl}#{pi}#{ul}\n"
+      end
+
+      left = nil
+      right = nil
+      compare = lambda do |field|
+        if intake < duration * dri[field]
+          right = " #{dri.label(field)&.colorize(:light_black)}"
+        else
+          left = " #{dri.label(field)&.colorize(:light_black)}"
+        end
+      end
+      compare.call(:spl) if dri.spl
+      compare.call(:pi) if right.nil? && dri.pi
+      compare.call(:ul) if right.nil? && dri.ul
+      "#{prefix}#{left} [#{intake}]#{right}\n"
+    end
+
+    private_class_method :summary_line_spl_pi_ul
   end
 end
