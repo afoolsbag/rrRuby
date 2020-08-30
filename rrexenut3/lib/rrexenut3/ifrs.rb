@@ -25,7 +25,7 @@ module RrExeNut3
     #   CN.              # 中国
     #   CN.CDC.          # 中国疾病预防控制中心
     #   CN.CDC.FCT6.     # 中国食物成分表：第六版
-    #   CN.CDC.FDC.      # 中国食物营养成分查询平台
+    #   CN.CDC.FCD.      # 中国食物营养成分查询平台
     #   CN.NHC.          # 中国国家卫生健康委员会
     #   CN.NHC.LPF.      # 中国预包装食品标签（Label of Prepackaged Food）
     #   OC.              # 大洋洲

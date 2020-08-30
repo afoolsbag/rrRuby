@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-25 – 2020-08-28
+# 2020-08-25 – 2020-08-30
 # Unlicense
 
 old, $VERBOSE = $VERBOSE, nil
@@ -77,8 +77,8 @@ module RrExeNut3
         query_value = @identifier_with_prefix ? ifri : ifri[@ifri_prefix.length..-1]
         rows = @db.execute2(<<~SQL, [query_value])
           SELECT *
-            FROM #{@table}
-           WHERE #{@identifier_column} = ?;
+            FROM "#{@table}"
+           WHERE "#{@identifier_column}" = ?;
         SQL
         key_row = rows[0]
         value_row = rows[1]

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-26 – 2020-08-28
+# 2020-08-26 – 2020-08-30
 # Unlicense
 
 require 'rrexenut3/ifrs/handlers'
@@ -12,14 +12,14 @@ module RrExeNut3
   module Ifrs
     ##
     # 查询器。
-    class CN_CDC_FDC_Querier < SqliteQuerier
+    class CN_CDC_FCD_Querier < SqliteQuerier
       def initialize
         super('CN.CDC.FCD.', identifier_column: 'index', identifier_with_prefix: false)
       end
     end
 
     HANDLERS.merge!(
-      'CN.CDC.FCD.': CN_CDC_FDC_Querier
+      'CN.CDC.FCD.': CN_CDC_FCD_Querier
     )
   end
 end
