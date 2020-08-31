@@ -5,6 +5,7 @@
 # 2020-07-24 – 2020-08-31
 # Unlicense
 
+require 'rrexenut3/cli/auxiliary'
 require 'rrexenut3/cli/commands/_handlers'
 require 'rrexenut3/cli/session'
 
@@ -19,12 +20,15 @@ module RrExeNut3
       def self.list(_args, sess)
         rows = sess.profile.select_activities_by_day(sess.focus_date)
 
+        table = TTY::Table.new(header: %w[时间 描述 名称 剂量])
+
         rows.each do |row|
           time, description, ifri, amount = row.values
           name, _nutrients = RrExeNut3::Ifrs.query(ifri).values
-          puts "#{time.strftime('%T')}, #{description}, #{name}, #{amount}"
+          table << [time.strftime('%T'), description, name, amount]
         end
 
+        puts table.render(:ascii)
         puts
       end
     end

@@ -6,21 +6,15 @@
 # Unlicense
 
 old, $VERBOSE = $VERBOSE, nil
-require 'pastel'
-require 'tty-command'
-require 'tty-config'
-require 'tty-logger'
-require 'tty-platform'
+require 'tty'
 $VERBOSE = old
 
 module RrExeNut3
   module Cli
-    # @return [TTY::Command]
-    COMMAND = TTY::Command.new
-
     # @return [TTY::Config]
     CONFIG = TTY::Config.new
     CONFIG.filename = 'rrexenut3'
+    CONFIG.append_path(Dir.pwd)
 
     # @return [TTY::Logger]
     LOGGER = TTY::Logger.new

@@ -3,7 +3,6 @@
 source 'https://gems.ruby-china.com/'
 
 group :production do
-  gem 'pastel'
   gem 'rb-readline'
   gem 'roo'
   gem 'roo-xls'
@@ -14,10 +13,7 @@ group :production do
   #   $ exit
   #   λ gen install sqlite3 --platform=ruby
   gem 'sqlite3'
-  gem 'tty-command'
-  gem 'tty-config'
-  gem 'tty-logger'
-  gem 'tty-platform'
+  gem 'tty'
 end
 
 group :test do

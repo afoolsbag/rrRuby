@@ -5,7 +5,6 @@
 # 2020-07-24 – 2020-08-31
 # Unlicense
 
-
 require 'rrexenut3/cli/session'
 
 module RrExeNut3

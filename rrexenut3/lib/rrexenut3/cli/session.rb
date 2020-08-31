@@ -6,6 +6,7 @@
 # Unlicense
 
 require 'rrexenut3/cli/auxiliary'
+require 'rrexenut3/cn_dris_2013'
 require 'rrexenut3/ifrs'
 require 'rrexenut3/profile'
 
