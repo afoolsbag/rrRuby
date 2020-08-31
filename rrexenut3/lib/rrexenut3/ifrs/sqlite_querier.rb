@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-25 – 2020-08-30
+# 2020-08-25 – 2020-08-31
 # Unlicense
 
 old, $VERBOSE = $VERBOSE, nil
@@ -34,7 +34,7 @@ module RrExeNut3
 
       # @return [SQLite3::Database, nil]
       attr_reader :db
-      # @return [Hash{String=>Array<String, Nutrients>}]
+      # @return [Hash{String=>QueryResult}]
       attr_reader :cache
 
       # @param ifri_prefix [String]
@@ -66,7 +66,7 @@ module RrExeNut3
       # 查询。
       #
       # @param ifri [String, #to_s] 国际食品记录标识符
-      # @return [Array<String, Nutrients>, nil] 返回"名称、营养素对"，或返回空
+      # @return [QueryResult, nil] 返回结果或返回空
       def query(ifri)
         ifri = ifri.to_s unless ifri.is_a?(String)
 
@@ -108,7 +108,7 @@ module RrExeNut3
           nut[key] = value if Infoods::TAGNAMES.include?(key)
         end
 
-        @cache[ifri] = [name, nut]
+        @cache[ifri] = QueryResult.new(name, nut)
       end
     end
   end

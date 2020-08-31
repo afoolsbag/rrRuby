@@ -17,6 +17,13 @@ module RrExeNut3
   # 国际食品记录。
   # International Food Records.
   module Ifrs
+    QueryResult = Struct.new(
+      # @return [String]
+      :name,
+      # @return [Nutrients]
+      :nutrients
+    )
+
     ##
     # 查询。
     #
@@ -50,7 +57,7 @@ module RrExeNut3
     # @see http://archive.unu.edu/unupress/unupbooks/80774e/80774E00.htm
     #
     # @param ifri [String] 国际食品记录标识符
-    # @return [Array<String, Nutrients>, nil] 返回"名称、营养素对"，或返回空
+    # @return [QueryResult, nil] 返回结果或返回空
     def self.query(ifri)
       # 精确查询
       rv = _query(ifri)

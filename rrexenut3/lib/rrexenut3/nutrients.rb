@@ -223,7 +223,7 @@ module RrExeNut3
       other = other.to_unit unless other.is_a?(Unit)
 
       factor = other / @unit_quantity
-      raise ArgumentError, '仅允许积的份量单位为标量 1 的乘法' unless factor.kind == :unitless
+      raise ArgumentError, "仅允许积的份量单位为标量 1 的乘法：#{other} 与 #{@unit_quantity.inverse} 不符合。" unless factor.kind == :unitless
 
       rv = Nutrients.new
       @contained_nutrients.each { |symbol, unit| rv[symbol] = unit * factor }

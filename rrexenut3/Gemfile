@@ -3,7 +3,6 @@
 source 'https://gems.ruby-china.com/'
 
 group :production do
-  gem 'colorize'
   gem 'pastel'
   gem 'rb-readline'
   gem 'roo'
@@ -16,6 +15,7 @@ group :production do
   #   λ gen install sqlite3 --platform=ruby
   gem 'sqlite3'
   gem 'tty-command'
+  gem 'tty-config'
   gem 'tty-logger'
   gem 'tty-platform'
 end
