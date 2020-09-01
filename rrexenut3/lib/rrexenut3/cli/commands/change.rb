@@ -22,7 +22,7 @@ module RrExeNut3
 
         sess.focus_date = args[1]
 
-        LOGGER.info("焦点日期已切换到 #{sess.focus_date}。")
+        LOGGER.success("焦点日期已切换到 #{sess.focus_date}。")
         puts
       end
 
@@ -34,7 +34,7 @@ module RrExeNut3
       def self.next(_args, sess)
         sess.focus_date = sess.focus_date.next_day
 
-        LOGGER.info("焦点日期已切换到 #{sess.focus_date}。")
+        LOGGER.success("焦点日期已切换到 #{sess.focus_date}。")
         puts
       end
 
@@ -46,7 +46,7 @@ module RrExeNut3
       def self.previous(_args, sess)
         sess.focus_date = sess.focus_date.prev_day
 
-        LOGGER.info("焦点日期已切换到 #{sess.focus_date}。")
+        LOGGER.success("焦点日期已切换到 #{sess.focus_date}。")
         puts
       end
 
@@ -58,7 +58,7 @@ module RrExeNut3
       def self.today(_args, sess)
         sess.focus_date = Date.today
 
-        LOGGER.info("焦点日期已切换到 #{sess.focus_date}。")
+        LOGGER.success("焦点日期已切换到 #{sess.focus_date}。")
         puts
       end
     end
