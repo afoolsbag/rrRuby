@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-24 – 2020-08-31
+# 2020-07-24 – 2020-09-02
 # Unlicense
 
 require 'rrexenut3/cli/commands/_handlers'
@@ -28,7 +28,7 @@ module RrExeNut3
           raise "值 #{sex} 不是有效的参数。" unless CnDris2013::Dris::SEX_VALID_VALUES.include?(sex)
 
           sess.profile.insert_sex(sex, sess.focus_date)
-          LOGGER.info('性别、孕期或哺乳期记录完成。')
+          LOGGER.success('性别、孕期或哺乳期记录完成。')
           puts
         else
           raise ArgumentError, '该命令需要 0 个或 1 个参数。'

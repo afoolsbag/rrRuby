@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-24 – 2020-08-31
+# 2020-07-24 – 2020-09-02
 # Unlicense
 
 require 'rrexenut3/cli/auxiliary'
@@ -21,11 +21,11 @@ module RrExeNut3
         case args.length
         when 1
           row = sess.profile.select_recent_weight(sess.focus_date)
-          puts "最近记录的体重为 #{row.weight}，记录于 #{row.date}。"
+          puts "最近记录的体重为 #{row&.weight}，记录于 #{row&.date}。"
           puts
         when 2
           sess.profile.insert_weight(args[1], sess.focus_date)
-          LOGGER.info('体重记录完成。')
+          LOGGER.success('体重记录完成。')
           puts
         else
           raise ArgumentError, '该命令需要 0 个或 1 个参数。'

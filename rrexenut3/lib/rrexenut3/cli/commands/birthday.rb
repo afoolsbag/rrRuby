@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-07-24 – 2020-08-31
+# 2020-07-24 – 2020-09-02
 # Unlicense
 
 require 'rrexenut3/cli/auxiliary'
@@ -25,7 +25,7 @@ module RrExeNut3
           puts
         when 2
           sess.profile.birthday = args[1]
-          LOGGER.info("已将生日设定为 #{sess.profile.birthday}。")
+          LOGGER.success("已将生日设定为 #{sess.profile.birthday}。")
           puts
         else
           raise ArgumentError, '该命令需要 0 个或 1 个参数。'

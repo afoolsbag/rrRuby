@@ -2,13 +2,12 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-24 – 2020-09-01
+# 2020-08-24 – 2020-09-02
 # Unlicense
 
 require 'rrexenut3/ifrs/cn_cdc_fcd_querier'
 require 'rrexenut3/ifrs/cn_cdc_fct6_querier'
 require 'rrexenut3/ifrs/cn_nhc_lpf_querier'
-require 'rrexenut3/ifrs/handlers'
 require 'rrexenut3/ifrs/nicknames'
 require 'rrexenut3/nutrients'
 

@@ -9,6 +9,7 @@ module RrExeNut3
   module Ifrs
     # @return [Hash{String=>String}]
     NICKNAMES = {
+      '苹果' => 'CN.CDC.FCD.613',
       '鸡蛋' => 'CN.CDC.FCD.978',
       '热干面' => 'CN.CDC.FCD.1213',
       '怡宝' => 'CN.NHC.LPF.6901285991219',
