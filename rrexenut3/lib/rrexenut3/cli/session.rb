@@ -168,12 +168,13 @@ module RrExeNut3
       ##
       # 记录一项活动。
       #
-      # @param ifri [String, #to_s]
+      # @param key [String, #to_s]
       # @param amount [Unit, #to_unit] 质量或体积
       # @param description [String, #to_s, nil]
       # @return [void]
-      def record_activity(ifri, amount, description)
-        raise "没有找到该项 #{ifri}" if RrExeNut3::Ifrs.query(ifri).nil?
+      def record_activity(key, amount, description)
+        ifri, _name, _nutrients = RrExeNut3::Ifrs.query(key)&.values
+        raise "没有找到该项 #{key}" unless ifri
 
         now = Time.now
         time = DateTime.new(focus_date.year, focus_date.month, focus_date.day, now.hour, now.min, now.sec)
@@ -189,7 +190,7 @@ module RrExeNut3
         intake = Nutrients.new
         rows.each do |row|
           _time, _description, ifri, amount = row.values
-          _name, nutrients = RrExeNut3::Ifrs.query(ifri).values
+          _ifri, _name, nutrients = RrExeNut3::Ifrs.query(ifri)&.values
           intake += nutrients * amount
         end
 

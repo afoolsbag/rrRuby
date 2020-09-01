@@ -24,7 +24,7 @@ module RrExeNut3
 
         rows.each do |row|
           time, description, ifri, amount = row.values
-          name, _nutrients = RrExeNut3::Ifrs.query(ifri).values
+          _ifri, name, _nutrients = RrExeNut3::Ifrs.query(ifri)&.values
           table << [time.strftime('%T'), description, name, amount]
         end
 

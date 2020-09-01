@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-24 – 2020-08-28
+# 2020-08-24 – 2020-09-01
 # Unlicense
 
 require 'rrexenut3/ifrs/cn_cdc_fcd_querier'
@@ -19,6 +19,8 @@ module RrExeNut3
   module Ifrs
     QueryResult = Struct.new(
       # @return [String]
+      :ifri,
+      # @return [String]
       :name,
       # @return [Nutrients]
       :nutrients
@@ -26,6 +28,25 @@ module RrExeNut3
 
     ##
     # 查询。
+    #
+    # @param key [String] 关键字
+    # @return [QueryResult, nil] 返回结果或返回空
+    def self.query(key)
+      # 精确查询
+      rv = _query(key)
+      return rv if rv
+
+      # 智能查询
+      # 可能昵称映射表中，尝试之
+      return _query(NICKNAMES[key]) if NICKNAMES.include?(key)
+      # 以 69 开头的 13 位数字，推断可能是属于中国的 GTIN 码，尝试之
+      return _query("CN.NHC.LPF.#{key}") if key =~ /^69\d{11}$/
+
+      nil
+    end
+
+    ##
+    # 精确查询。
     #
     # 国际食品记录标识符形如：
     #
@@ -58,23 +79,6 @@ module RrExeNut3
     #
     # @param ifri [String] 国际食品记录标识符
     # @return [QueryResult, nil] 返回结果或返回空
-    def self.query(ifri)
-      # 精确查询
-      rv = _query(ifri)
-      return rv if rv
-
-      # 智能查询
-
-      # 在昵称映射表中
-      return _query(NICKNAMES[ifri]) if NICKNAMES.include?(ifri)
-
-      # 以 69 开头的 13 位数字，推断可能是属于中国的 GTIN 码，尝试之
-      return _query("CN.NHC.LPF.#{ifri}") if ifri =~ /^69\d{11}$/
-
-      nil
-    end
-
-    # 精确查询
     def self._query(ifri)
       HANDLERS.each { |k, v| return v.instance.query(ifri) if ifri.start_with?(k.to_s) }
       nil

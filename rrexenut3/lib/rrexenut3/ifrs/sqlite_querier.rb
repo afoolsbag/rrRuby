@@ -108,7 +108,7 @@ module RrExeNut3
           nut[key] = value if Infoods::TAGNAMES.include?(key)
         end
 
-        @cache[ifri] = QueryResult.new(name, nut)
+        @cache[ifri] = QueryResult.new(ifri, name, nut)
       end
     end
   end
