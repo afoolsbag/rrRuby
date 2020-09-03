@@ -2,12 +2,13 @@
 # frozen_string_literal: true
 
 # zhengrr
-# 2020-08-24 – 2020-09-02
+# 2020-08-24 – 2020-09-03
 # Unlicense
 
 require 'rrexenut3/ifrs/cn_cdc_fcd_querier'
 require 'rrexenut3/ifrs/cn_cdc_fct6_querier'
 require 'rrexenut3/ifrs/cn_nhc_lpf_querier'
+require 'rrexenut3/ifrs/xx_boohee_querier'
 require 'rrexenut3/ifrs/nicknames'
 require 'rrexenut3/nutrients'
 
@@ -31,15 +32,33 @@ module RrExeNut3
     # @param key [String] 关键字
     # @return [QueryResult, nil] 返回结果或返回空
     def self.query(key)
-      # 精确查询
+      # 尝试精确查询
       rv = _query(key)
       return rv if rv
 
-      # 智能查询
-      # 可能昵称映射表中，尝试之
-      return _query(NICKNAMES[key]) if NICKNAMES.include?(key)
+      # 尝试昵称映射表
+      rv = _query(NICKNAMES[key]) if NICKNAMES.include?(key)
+      return rv if rv
+
+      # 以 471 开头的 13 位数字，推断可能是属于中国台湾的 GTIN 码，尝试之
+      rv = _query("CN.NHC.LPF.#{key}") if key =~ /^471\d{10}$/
+      return rv if rv
+
+      # 以 489 开头的 13 位数字，推断可能是属于中国香港的 GTIN 码，尝试之
+      rv = _query("CN.NHC.LPF.#{key}") if key =~ /^489\d{10}$/
+      return rv if rv
+
       # 以 69 开头的 13 位数字，推断可能是属于中国的 GTIN 码，尝试之
-      return _query("CN.NHC.LPF.#{key}") if key =~ /^69\d{11}$/
+      rv = _query("CN.NHC.LPF.#{key}") if key =~ /^69\d{11}$/
+      return rv if rv
+
+      # 以 958 开头的 13 位数字，推断可能是属于中国澳门的 GTIN 码，尝试之
+      rv = _query("CN.NHC.LPF.#{key}") if key =~ /^958\d{10}$/
+      return rv if rv
+
+      # 纯小写拉丁字母，推断可能属于薄荷网词条，尝试之
+      rv = _query("XX.Boohee.#{key}") if key =~ /^[a-z]+$/
+      return rv if rv
 
       nil
     end
@@ -65,6 +84,7 @@ module RrExeNut3
     #   US.              # 美国
     #   US.USDA.         # 美国农业部
     #   US.USDA.FDC.     # 美国食物数据中心
+    #   XX.Boohee.       # 薄荷网
     #   XX.SnEN3.        # 运动与营养：第 3 版
     #
     # 其中顶级域是 ISO 3166-1 所约定的国家代码；
