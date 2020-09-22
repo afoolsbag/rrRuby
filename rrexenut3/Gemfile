@@ -11,7 +11,7 @@ group :production do
   #   λ msys2
   #   $ pacman -S base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-sqlite3
   #   $ exit
-  #   λ gen install sqlite3 --platform=ruby
+  #   λ gem install sqlite3 --platform=ruby
   gem 'sqlite3'
   gem 'tty'
 end
