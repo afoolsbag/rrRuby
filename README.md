@@ -1,149 +1,167 @@
 # zhengrr 所知的 Ruby
 
-官网 <https://www.ruby-lang.org/>，Ruby 始于 1995 年，最初由松本行弘创作。
+[Ruby](https://www.ruby-lang.org/) 始于 1995 年，最初由松本行弘创作。
 
 ## 参考
 
-*   [*Ruby-Doc.org*](https://ruby-doc.org/)
-    *   [Ruby 内核参考](https://ruby-doc.org/core/)
-    *   [Ruby 标准库参考](https://ruby-doc.org/stdlib/)
-*   [*Ruby API*](https://rubyapi.org/)
-*   [*zenspider.com 上的 Ruby Quickref*](http://zenspider.com/ruby/quickref.html)
+*   [Ruby 文档](https://www.ruby-lang.org/zh_cn/documentation/)
+*   [Ruby-Doc.org: Documenting the Ruby Language](https://ruby-doc.org/)
+    *   [内核参考](https://ruby-doc.org/core/)
+    *   [标准库参考](https://ruby-doc.org/stdlib/)
+*   [RubyDoc.info: Documenting RubyGems, Stdlib, and GitHub Projects](https://www.rubydoc.info/)
+*   [Ruby API](https://rubyapi.org/)
+*   [Ruby QuickRef | zenspider.com | by ryan davis](http://zenspider.com/ruby/quickref.html)
 
 ## 风格
 
-*   [*The Ruby Style Guide*](https://rubystyle.guide/) <sub>
-        [*cmn-Hans*](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md) </sub>
-*   RubyGems Guides 上的 [*What is a gem?*](https://guides.rubygems.org/what-is-a-gem/)
+*   [The Ruby Style Guide](https://rubystyle.guide/) ([cmn-Hans](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md))
+*   [What is a gem? - RubyGems Guides](https://guides.rubygems.org/what-is-a-gem/)
 
 ## 指南
 
-*   [*Learn Ruby*](http://rubylearning.com/)
-*   Ruby-Doc.org 上的 [*Ruby Documentation Bundle*](https://ruby-doc.org/docs/ruby-doc-bundle/)
-*   Wikibooks 上的 [*Ruby Programming*](https://wikibooks.org/wiki/Ruby_Programming)
-*   [*Programming Ruby 中文版：第 2 版*](http://zbgb.org/278/ZdocDetail3691109.htm "ISBN 978-7-121-03815-0")
-*   *松本行弘的程序世界*
+*   [Ruby Tutorial - Learn Ruby](http://rubylearning.com/)
+*   [Ruby Documentation Bundle](https://ruby-doc.org/docs/ruby-doc-bundle/)
+*   [Ruby Programming - Wikibooks, open books for an open world](https://wikibooks.org/wiki/Ruby_Programming)
+*   [Programming Ruby 中文版：第 2 版](# "ISBN 978-7-121-03815-0")
+*   松本行弘的程序世界
 
 ## Awesome
 
-[*Awesome Ruby*](https://awesome-ruby.com/)，
-[*The Ruby Toolbox*](https://www.ruby-toolbox.com/)。
+[Awesome Ruby](https://awesome-ruby.com/)  
+[The Ruby Toolbox](https://www.ruby-toolbox.com/)
 
-| [*Rake*](https://ruby.github.io/rake/) <sub>
-      [*Rakefile*](https://ruby.github.io/rake/doc/rakefile_rdoc.html) </sub>
-| [*RDoc*](https://ruby.github.io/rdoc/) <sub>
-      [*writing-doc*](https://ruby.github.io/rdoc/README_rdoc.html#label-Writing+Documentation),
-      [*markup-ref*](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference) </sub>
-| [*YARD*](https://yardoc.org/) <sub>
-      [*Tags*](https://rubydoc.info/gems/yard/file/docs/Tags.md) </sub>
+*   [Bundler](https://bundler.io/)
+    *   [Gemfile](https://bundler.io/man/gemfile.5.html)
+*   [minitest](https://github.com/seattlerb/minitest)
+*   [Rake](https://ruby.github.io/rake/)
+    *   [Rakefile](https://ruby.github.io/rake/doc/rakefile_rdoc.html)
+*   [rbenv](https://github.com/rbenv/rbenv)
+*   [RDoc](https://ruby.github.io/rdoc/)
+    *   [writing-doc](https://ruby.github.io/rdoc/README_rdoc.html#label-Writing+Documentation)
+    *   [markup-ref](https://ruby.github.io/rdoc/RDoc/Markup.html#class-RDoc::Markup-label-RDoc+Markup+Reference)
+*   [RSpec](https://rspec.info/)
+    *   [better](http://www.betterspecs.org/) ([cmn-Hans](http://www.betterspecs.org/zh_cn/))
+*   [RubyGems](https://rubygems.org/)
+*   [Ruby Installer](https://rubyinstaller.org/)
+*   [RubyMine](https://jetbrains.com/ruby/) ([zh_CN](https://github.com/pingfangx/jetbrains-in-chinese/tree/master/RubyMine))
+*   [Ruby Version Manager](https://rvm.io/)
+*   [test-unit](https://test-unit.github.io/)
+*   [YARD](https://yardoc.org/)
+    *   [Tags](https://rubydoc.info/gems/yard/file/docs/Tags.md)
 
-环境管理
-| [*rbenv*](https://github.com/rbenv/rbenv),
-  [*Ruby Installer*](https://rubyinstaller.org/),
-  [*Ruby Version Manager*](https://rvm.io/)
+### Ruby 版本管理器 rbenv
 
-包管理器
-| [*RubyGems*](https://rubygems.org/)
-| [*Bundler*](https://bundler.io/) <sub>
-      [*Gemfile*](https://bundler.io/man/gemfile.5.html) </sub>
+``` batch
+:: 列出可用版本
+%USERPROFILE%> rbenv install --list
 
-测试
-| [*minitest*](https://github.com/seattlerb/minitest)
-| [*RSpec*](https://rspec.info/) <sub>
-      [*better*](http://www.betterspecs.org/),
-      [*-cmn-Hans*](http://www.betterspecs.org/zh_cn/) </sub>
-| [*test-unit*](https://test-unit.github.io/)
+:: 下载某版本
+%USERPROFILE%> rbenv install <version>
 
-集成开发
-| [*RubyMine*](https://jetbrains.com/ruby/) <sub>
-      [*zh_CN*](https://github.com/pingfangx/jetbrains-in-chinese/tree/master/RubyMine) </sub>
+:: 列出已安装版本
+%USERPROFILE%> rbenv versions
+
+:: 选择全局版本
+%USERPROFILE%> rbenv global <version>
+
+:: 同步垫片
+%USERPROFILE%> rbenv rehash
+```
+
+参见：
+
+*   [rbenv: Groom your app’s Ruby environment](https://github.com/rbenv/rbenv)
+*   [rbenv for Windows](https://github.com/nak1114/rbenv-win)
 
 ### Ruby 运行时
 
-```cmder
+``` batch
 :: 使用 Scoop 安装 Ruby 运行时
-%USERPROFILE% λ scoop install ruby
+%USERPROFILE%> scoop install ruby
 
 :: 交互式 Ruby 壳层
-%USERPROFILE% λ irb
+%USERPROFILE%> irb
 
 :: 运行脚本
-%USERPROFILE% λ ruby -w <script.rb>
+%USERPROFILE%> ruby -w <script.rb>
 ```
 
 ### Ruby 包管理器 RubyGems
 
-[*RubyGems 官网*](https://rubygems.org/)。
-
 环境变量 `GEM_HOME` 指定 Gem 安装位置，环境变量 `GEM_PATH` 指定 Gem 查找位置，`GEM_PATH` 应包含 `GEM_HOME`。
 
-```cmder
+``` batch
 :: 列出源
-%USERPROFILE% λ gem sources [--list]
-:: abbr.        gem sources [-l]
+%USERPROFILE%> gem sources [--list]
+:: abbr.       gem sources [-l]
 
 :: 增加源
-%USERPROFILE% λ gem sources --add
-:: abbr         gem sources -a
+%USERPROFILE%> gem sources --add
+:: abbr        gem sources -a
 
 :: 去除源
-%USERPROFILE% λ gem sources --remove
-:: abbr.        gem sources -r
+%USERPROFILE%> gem sources --remove
+:: abbr.       gem sources -r
 
 :: 清空源和缓存
-%USERPROFILE% λ gem sources --clear-all
-:: abbr.        gem sources -c
+%USERPROFILE%> gem sources --clear-all
+:: abbr.       gem sources -c
 
 :: 更新缓存
-%USERPROFILE% λ gem sources --update
-:: abbr.        gem sources -u
+%USERPROFILE%> gem sources --update
+:: abbr.       gem sources -u
 
 :: 配置镜像
-%USERPROFILE% λ gem sources -a https://gems.ruby-china.com/ -r https://rubygems.org/
+%USERPROFILE%> gem sources -a https://gems.ruby-china.com/ -r https://rubygems.org/
 
 :: 升级 RubyGems
-%USERPROFILE% λ gem update --system
+%USERPROFILE%> gem update --system
 
 :: 列出已安装的 Gem
-%USERPROFILE% λ gem list --locale
-:: abbr.        gem liar -l
+%USERPROFILE%> gem list --locale
+:: abbr.       gem list -l
 
 :: 按名称查询 Gem
-%USERPROFILE% λ gem query --remote --name <name>
-:: abbr.        gem query -rn <name>
+%USERPROFILE%> gem query --remote --name <name>
+:: abbr.       gem query -rn <name>
 
 :: 安装 Gem
-%USERPROFILE% λ gem install <gem> --remote
-:: abbr.        gem install <gem> -r
+%USERPROFILE%> gem install <gem> --remote
+:: abbr.       gem install <gem> -r
 
 :: 升级 Gem
-%USERPROFILE% λ gem update <gem> --remote
-:: abbr.        gem update <gem> -r
+%USERPROFILE%> gem update <gem> --remote
+:: abbr.       gem update <gem> -r
 
 :: 卸载 Gem
-%USERPROFILE% λ gem uninstall <gem>
+%USERPROFILE%> gem uninstall <gem>
 
 :: 运行本地 Gem RDoc 文档服务
-%USERPROFILE% λ gem server
+%USERPROFILE%> gem server
 ```
+
+参见：
+
+*   [RubyGems: Library packaging and distribution for Ruby.](https://github.com/rubygems/rubygems)
+*   [RubyGems.org | Ruby 社区 Gem 托管](https://rubygems.org/)
 
 ### Ruby 环境管理器 Bundler
 
-[*Bundler 官网*](https://bundler.io/)。
-
-```cmder
+``` batch
 :: 依 Gemfile 安装依赖的 Gem
-%USERPROFILE% λ bundle install
+%USERPROFILE%> bundle install
 ```
+
+参见 [Bundler](https://bundler.io/)。
 
 ### Ruby 文档生成器 RDoc
 
-[*RDoc 官网*](https://github.com/ruby/rdoc)。
-
-```cmder
+``` batch
 :: 依代码注释生成文档
-%USERPROFILE% λ rdoc
+%USERPROFILE%> rdoc
 ```
+
+参见 [RDoc](https://github.com/ruby/rdoc)。
 
 ## 许可
 
