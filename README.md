@@ -68,10 +68,7 @@
 %USERPROFILE%> rbenv rehash
 ```
 
-参见：
-
-*   [rbenv: Groom your app’s Ruby environment](https://github.com/rbenv/rbenv)
-*   [rbenv for Windows](https://github.com/nak1114/rbenv-win)
+参见 [rbenv: Groom your app’s Ruby environment](https://github.com/rbenv/rbenv)。
 
 ### Ruby 运行时
 
