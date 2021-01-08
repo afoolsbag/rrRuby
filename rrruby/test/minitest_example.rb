@@ -1,14 +1,17 @@
 #!/usr/bin/env ruby -w
 # frozen_string_literal: true
 
-# 参见 https://github.com/seattlerb/minitest#label-Unit+tests。
+##
+# 参见 https://github.com/seattlerb/minitest#label-Unit+tests 。
 #
 # zhengrr
-# 2020-07-28 – 2020-07-28
+# 2020-07-28 – 2021-01-07
 # Unlicense
 
 require 'minitest/autorun'
 
+##
+# 示例测试类
 class Meme
   def i_can_has_cheezburger?
     'OHAI!'
@@ -19,6 +22,8 @@ class Meme
   end
 end
 
+##
+# 示例测试用例
 class MemeTest < Minitest::Test
   def setup
     @meme = Meme.new

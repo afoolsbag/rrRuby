@@ -3,7 +3,7 @@
 # https://github.com/ruby/rake
 #
 # zhengrr
-# 2019-12-31 – 2020-07-28
+# 2019-12-31 – 2021-01-08
 # Unlicense
 
 require 'fileutils'
@@ -39,7 +39,8 @@ end
 Rake::TestTask.new do |t|
   t.libs << 'test'
   t.libs << 'lib'
-  t.test_files = FileList['test/**/test_*.rb', 'test/**/*_test.rb']
+  # t.test_files = FileList['test/**/test_*.rb', 'test/**/*_test.rb']
+  t.test_files = FileList['test/**/*.rb']
 end
 
 # 行为测试相关，提供以下任务：
